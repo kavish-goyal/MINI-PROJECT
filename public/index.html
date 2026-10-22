@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevConnect – Hackathon Squads & Collaborative Project Teams</title>
+  <meta name="description"
+    content="DevConnect helps students form winning hackathon teams and collaborative project squads. Find teammates by role, skills, or college." />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <!-- ── Navbar ──────────────────────────────────────────────── -->
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+
+      <!-- Desktop nav links (populated by JS) -->
+      <div class="navbar-nav" id="nav-links"></div>
+
+      <!-- Mobile toggle -->
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <a href="/" class="navbar-brand">
+          <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+          <span class="navbar-brand-text">DevConnect</span>
+        </a>
+        <button id="mobile-close" aria-label="Close menu" class="btn-ghost btn-sm">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <!-- ── Hero ────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-kicker">🏆 Hackathon Squads &amp; 💻 Project Team Formation</p>
+        <h1 class="hero-headline">Build the winning team<br>for your next <span class="grad-word">hackathon or
+            project.</span></h1>
+        <p class="hero-sub">DevConnect connects ambitious students. Form hackathon teams with complementary
+          roles—designers, ML engineers, frontend and backend devs—or recruit teammates for semester and side projects.
+        </p>
+        <div class="hero-actions">
+          <a href="/discover.html?type=hackathon" class="btn btn-primary btn-lg" id="hero-cta">🏆 Join Hackathon
+            Squads</a>
+          <a href="/discover.html?type=regular" class="btn btn-secondary btn-lg" id="hero-projects-cta">💻 Explore
+            Projects</a>
+          <a href="/edit-project.html" class="hero-link" id="hero-secondary">+ Post a Team or Project</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">500+</div>
+            <div class="hero-stat-label">Students</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">45+</div>
+            <div class="hero-stat-label">Hackathon Squads</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">120+</div>
+            <div class="hero-stat-label">Active Projects</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product preview (glassmorphism illustration) -->
+      <div class="hero-preview" aria-hidden="true">
+        <div class="preview-header">
+          <div class="preview-dot"></div>
+          <div class="preview-dot"></div>
+          <div class="preview-dot"></div>
+          <span class="preview-tab">Live Squads &amp; Projects</span>
+        </div>
+        <div class="preview-body">
+          <!-- Card 1: Hackathon Squad -->
+          <div class="preview-card"
+            style="border-left: 3px solid #D97706; background: linear-gradient(180deg, #FFFFFF, #FFFDF8);">
+            <div class="preview-card-title">🏆 Smart India Hackathon '26 Squad</div>
+            <div class="preview-card-meta">
+              <span class="preview-pill"
+                style="background:rgba(217,119,6,0.12);color:#B45309;font-weight:700;">Hackathon</span>
+              <span class="preview-pill-green">2 Roles Open</span>
+            </div>
+            <div class="preview-tags">
+              <span class="preview-tag"
+                style="color:#1D4ED8;background:rgba(29,78,216,0.08);font-weight:600;">UI/UX</span>
+              <span class="preview-tag" style="color:#1D4ED8;background:rgba(29,78,216,0.08);font-weight:600;">ML
+                Engineer</span>
+              <span class="preview-tag">Python</span>
+            </div>
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-2);margin-top:2px;">
+              <span style="color:#B45309;font-weight:600;">Deadline in 4 days</span>
+              <span class="preview-view-btn" style="color:#B45309;">View Squad →</span>
+            </div>
+          </div>
+          <!-- Card 2: Collaborative Project -->
+          <div class="preview-card">
+            <div class="preview-card-title">Campus Lost &amp; Found App</div>
+            <div class="preview-card-meta">
+              <span class="preview-pill">Web App</span>
+              <span class="preview-pill-green">Open</span>
+            </div>
+            <div class="preview-tags">
+              <span class="preview-tag">React</span>
+              <span class="preview-tag">Node.js</span>
+              <span class="preview-tag">MongoDB</span>
+            </div>
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-2);margin-top:2px;">
+              <span>2 spots left</span>
+              <span class="preview-view-btn">View Project →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 🏆 HACKATHONS SECTION (SEPARATE) ──────────────────────── -->
+  <section class="section" id="hackathons-section"
+    style="border-bottom:1px solid var(--border);background:linear-gradient(180deg, rgba(217,119,6,0.035) 0%, transparent 100%);">
+    <div class="wrap">
+      <div class="section-header flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <div
+            style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#B45309;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">
+            <span>🏆</span> Hackathon Team Formation
+          </div>
+          <h2 class="section-title">Upcoming Hackathon Squads</h2>
+          <p class="t-sm t-muted" style="margin-top:4px;">Team up for upcoming hackathons. Recruit specialized
+            roles—UI/UX, ML, Frontend, Pitch Lead—before the deadline.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <a href="/edit-project.html?type=hackathon" class="btn btn-ghost btn-sm">+ Form Hackathon Team</a>
+          <a href="/discover.html?type=hackathon" class="btn btn-secondary">View all hackathons →</a>
+        </div>
+      </div>
+
+      <!-- Loaded by JS -->
+      <div id="home-hackathons-loading">
+        <div class="spinner"></div>
+      </div>
+      <div class="projects-grid" id="home-hackathons-grid" style="display:none;"></div>
+      <div class="empty hidden" id="home-hackathons-empty">
+        <span style="font-size:32px;display:block;margin-bottom:8px;">🏆</span>
+        <p>No open hackathon squads right now. <a href="/edit-project.html?type=hackathon">Be the first to form a
+            hackathon squad!</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 💻 PROJECTS SECTION (SEPARATE) ────────────────────────── -->
+  <section class="section" id="projects-section" style="border-bottom:1px solid var(--border);">
+    <div class="wrap">
+      <div class="section-header flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <div
+            style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">
+            <span>💻</span> Project Teams Formation
+          </div>
+          <h2 class="section-title">Open Collaborative Projects</h2>
+          <p class="t-sm t-muted" style="margin-top:4px;">Join student-led semester projects, open-source initiatives,
+            research prototypes, and portfolio-worthy MVPs.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <a href="/edit-project.html" class="btn btn-ghost btn-sm">+ Create Project</a>
+          <a href="/discover.html?type=regular" class="btn btn-secondary">View all projects →</a>
+        </div>
+      </div>
+
+      <!-- Loaded by JS -->
+      <div id="home-projects-loading">
+        <div class="spinner"></div>
+      </div>
+      <div class="projects-grid" id="home-projects-grid" style="display:none;"></div>
+      <div class="empty hidden" id="home-projects-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M9 9h6M9 13h4" />
+        </svg>
+        <p>No open projects yet. <a href="/edit-project.html">Be the first to post one.</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ─────────────────────────────────────────── -->
+  <section class="section" id="how-it-works">
+    <div class="wrap">
+      <div class="section-header" style="text-align:center;max-width:620px;margin-left:auto;margin-right:auto;">
+        <p class="section-label">Process</p>
+        <h2 class="section-title">How DevConnect works</h2>
+        <p class="t-sm t-muted" style="margin-top:8px;">Whether you're gearing up for a 36-hour hackathon or building a
+          semester MVP, find your squad in minutes.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Build your builder profile</h3>
+          <p>Highlight your tech stack, branch, college, and hackathon experience so teams know what superpower you
+            bring.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Find a squad or project</h3>
+          <p>Filter by hackathon name, specific role needed (UI/UX, ML, Fullstack), required skills, or same-college
+            peers.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Team up &amp; ship</h3>
+          <p>Apply with a quick message, get accepted to the roster, coordinate in team comms, and build something real.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA strip ─────────────────────────────────────────────── -->
+  <div class="cta-strip">
+    <div class="wrap">
+      <h2>Ready to find your team?</h2>
+      <p>Join hundreds of student developers, designers, and AI creators building together.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+        <a href="/register.html" class="btn btn-primary btn-lg" id="cta-btn">Get started free →</a>
+        <a href="/discover.html?type=hackathon" class="btn btn-secondary btn-lg"
+          style="background:rgba(255,255,255,0.9);">🏆 Browse Hackathon Squads</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <a href="/" class="footer-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="footer-logo" />
+        <span class="footer-brand-text">DevConnect</span>
+      </a>
+      <div style="display:flex;gap:16px;font-size:13px;color:var(--text-2);">
+        <a href="/discover.html?type=hackathon">🏆 Hackathon Teams</a>
+        <a href="/discover.html?type=regular">💻 Student Projects</a>
+        <a href="/#how-it-works">How It Works</a>
+      </div>
+      <span class="footer-copy">Built for students &amp; builders &copy; 2026</span>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script>
+    /* ── Navbar ── */
+    renderNavbar().then(user => {
+      if (user) {
+        const cta = document.getElementById('cta-btn');
+        const heroSecondary = document.getElementById('hero-secondary');
+        if (cta) { cta.textContent = 'Go to Dashboard →'; cta.href = '/dashboard.html'; }
+        if (heroSecondary) { heroSecondary.textContent = '+ Create a Project / Squad'; }
+      }
+    });
+
+    /* ── Helper to render a project card ── */
+    function renderCard(p, isHackathon) {
+      const spotsLeft = p.totalPositions - (p.acceptedMembers?.length || 0);
+      const skills = p.requiredSkills || [];
+      const visible = skills.slice(0, 3);
+      const extra = skills.length - 3;
+      const college = p.college || p.owner?.college || '';
+
+      const card = document.createElement('div');
+      card.className = isHackathon ? 'proj-card hackathon-card' : 'proj-card';
+
+      let rolesHtml = '';
+      if (isHackathon && p.rolesNeeded && p.rolesNeeded.length > 0) {
+        rolesHtml = `
+          <div style="margin-top:4px;margin-bottom:4px;">
+            <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Seeking Roles:</div>
+            <div class="tags">
+              ${p.rolesNeeded.map(r => `<span class="role-tag">${r}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        rolesHtml = `
+          <div class="tags">
+            ${visible.map(s => `<span class="tag">${s}</span>`).join('')}
+            ${extra > 0 ? `<span class="tag">+${extra}</span>` : ''}
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="proj-card-header">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+              ${isHackathon ? `
+                <span class="hackathon-badge">🏆 ${p.hackathonName || 'Hackathon Squad'}</span>
+              ` : ''}
+              <span class="pill pill-blue">${p.category}</span>
+              ${college ? `<span class="pill pill-default" style="font-size:11px;">🏫 ${college}</span>` : ''}
+            </div>
+            <div class="proj-card-title">${p.title}</div>
+          </div>
+        </div>
+        <p class="proj-card-desc">${p.description}</p>
+        ${rolesHtml}
+        <div class="proj-card-footer">
+          <div class="proj-card-meta">
+            <span style="font-weight:600;color:${isHackathon ? '#B45309' : 'var(--accent)'};">${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left</span>
+            <span>Deadline ${new Date(p.deadline).toLocaleDateString()}</span>
+          </div>
+          <a href="/project.html?id=${p._id}" class="btn ${isHackathon ? 'btn-primary' : 'btn-secondary'} btn-sm">
+            ${isHackathon ? 'View Squad →' : 'View Project →'}
+          </a>
+        </div>
+      `;
+      return card;
+    }
+
+    /* ── Load Hackathons & Regular Projects independently in parallel ── */
+    (async () => {
+      // 1. Fetch Hackathons
+      try {
+        const { data: hackData } = await api.get('/api/projects?isHackathon=true&page=1&limit=3');
+        document.getElementById('home-hackathons-loading').style.display = 'none';
+
+        if (hackData && hackData.projects && hackData.projects.length > 0) {
+          const grid = document.getElementById('home-hackathons-grid');
+          hackData.projects.forEach(p => grid.appendChild(renderCard(p, true)));
+          grid.style.display = '';
+        } else {
+          document.getElementById('home-hackathons-empty').classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Failed loading hackathons:', err);
+        document.getElementById('home-hackathons-loading').style.display = 'none';
+        document.getElementById('home-hackathons-empty').classList.remove('hidden');
+      }
+
+      // 2. Fetch Regular Projects
+      try {
+        const { data: projData } = await api.get('/api/projects?isHackathon=false&page=1&limit=3');
+        document.getElementById('home-projects-loading').style.display = 'none';
+
+        if (projData && projData.projects && projData.projects.length > 0) {
+          const grid = document.getElementById('home-projects-grid');
+          projData.projects.forEach(p => grid.appendChild(renderCard(p, false)));
+          grid.style.display = '';
+        } else {
+          document.getElementById('home-projects-empty').classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Failed loading projects:', err);
+        document.getElementById('home-projects-loading').style.display = 'none';
+        document.getElementById('home-projects-empty').classList.remove('hidden');
+      }
+    })();
+  </script>
+</body>
+
+</html>

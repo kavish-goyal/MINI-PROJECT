@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project – DevConnect</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    @media (max-width: 900px) {
+      .detail-layout {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <span class="navbar-brand">DevConnect</span>
+        <button id="mobile-close" class="btn-ghost">✕</button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <div class="wrap page-body">
+
+    <!-- Loading -->
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Content -->
+    <div id="content" class="hidden">
+
+      <a href="/discover.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Back to discover
+      </a>
+
+      <!-- Two-column layout -->
+      <div class="detail-layout">
+
+        <!-- Main column -->
+        <div class="detail-main">
+          <!-- Hackathon Banner -->
+          <div id="hackathon-banner"
+            style="display:none;background:linear-gradient(135deg, rgba(217,119,6,0.1), rgba(180,83,9,0.15));border:1px solid rgba(180,83,9,0.3);border-radius:12px;padding:16px 20px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:28px;">🏆</span>
+                <div>
+                  <span
+                    style="font-size:12px;font-weight:700;color:#B45309;text-transform:uppercase;letter-spacing:0.05em;">Hackathon
+                    Team Formation</span>
+                  <h3 id="hackathon-name-display"
+                    style="font-size:18px;font-weight:800;color:var(--text);margin:2px 0 0;"></h3>
+                </div>
+              </div>
+              <a id="hackathon-link-btn" href="#" target="_blank" rel="noopener noreferrer"
+                class="btn btn-secondary btn-sm" style="display:none;gap:6px;">
+                <span>Visit Hackathon</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <span class="pill pill-blue" id="proj-category"></span>
+            <span class="pill" id="proj-status"></span>
+            <span class="pill pill-green" id="same-college-indicator" style="display:none;">🏫 Same College</span>
+          </div>
+          <h1 id="proj-title"></h1>
+
+          <!-- Owner actions row -->
+          <div id="owner-actions" class="hidden" style="display:none;gap:8px;margin-top:16px;flex-wrap:wrap;">
+            <a class="btn btn-secondary btn-sm" id="edit-btn" href="#">Edit post</a>
+            <a class="btn btn-secondary btn-sm" id="applicants-link" href="#">View applicants</a>
+            <button class="btn btn-secondary btn-sm" id="close-btn">Close post</button>
+            <button class="btn btn-danger btn-sm" id="delete-btn">Delete post</button>
+          </div>
+
+          <div class="detail-section">
+            <h2>About this project</h2>
+            <p class="detail-desc" id="proj-desc"></p>
+          </div>
+
+          <!-- Hackathon Roles Needed -->
+          <div class="detail-section" id="roles-section" style="display:none;">
+            <h2>Hackathon Team Roles Needed</h2>
+            <div class="tags" id="proj-roles"></div>
+          </div>
+
+          <div class="detail-section">
+            <h2>Skills required</h2>
+            <div class="tags" id="proj-skills"></div>
+          </div>
+
+          <div class="detail-section">
+            <h2>Team members <span class="t-dim t-sm" id="member-count"></span></h2>
+            <div id="proj-members"></div>
+          </div>
+        </div>
+
+        <!-- Side panel -->
+        <div class="side-panel">
+
+          <!-- Info card -->
+          <div class="card">
+            <div class="info-list">
+              <div class="info-row">
+                <span class="info-label">Owner</span>
+                <span class="info-value" id="proj-owner"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">College</span>
+                <span class="info-value" id="proj-college"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Deadline</span>
+                <span class="info-value" id="proj-deadline"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Positions</span>
+                <span class="info-value" id="proj-positions"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Application card (non-owners) -->
+          <div class="card" id="apply-card">
+            <h2 class="t-h3" style="margin-bottom:12px;">Apply to join team</h2>
+            <div class="alert" id="apply-msg"></div>
+
+            <div id="apply-form-area">
+              <!-- Role selector for Hackathon teams -->
+              <div class="field" id="apply-role-wrap" style="display:none;">
+                <label for="apply-role-select">Role you want to take</label>
+                <select id="apply-role-select" class="filter-select" style="width:100%;max-width:100%;height:38px;">
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="apply-message">Why do you want to join? <span class="hint">(required)</span></label>
+                <textarea id="apply-message" rows="4"
+                  placeholder="Tell the team leader about your background and motivation…"></textarea>
+              </div>
+              <button class="btn btn-primary btn-block" id="apply-btn">Apply now</button>
+            </div>
+
+            <div id="apply-status" class="hidden"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get('id');
+    if (!projectId) window.location.href = '/discover.html';
+
+    async function loadProject() {
+      const user = await renderNavbar();
+
+      const { data, error } = await api.get(`/api/projects/${projectId}`);
+      document.getElementById('loading').style.display = 'none';
+
+      if (error) {
+        const content = document.getElementById('content');
+        content.innerHTML = `<p style="color:var(--red);">${error}</p>`;
+        content.classList.remove('hidden');
+        return;
+      }
+
+      const p = data.project;
+      document.title = `${p.title} – DevConnect`;
+
+      // Fill basic fields
+      document.getElementById('proj-title').textContent = p.title;
+      document.getElementById('proj-category').textContent = p.category;
+      if (p.owner?._id) {
+        document.getElementById('proj-owner').innerHTML = `<a href="/profile.html?id=${p.owner._id}" style="color:inherit;text-decoration:none;font-weight:700;" title="View Builder Profile">${p.owner.name}</a>`;
+      } else {
+        document.getElementById('proj-owner').textContent = p.owner?.name || '—';
+      }
+      const collegeName = p.college || p.owner?.college || 'Open to all colleges';
+      document.getElementById('proj-college').textContent = collegeName;
+      document.getElementById('proj-deadline').textContent = new Date(p.deadline).toLocaleDateString();
+      document.getElementById('proj-positions').textContent =
+        `${p.acceptedMembers.length} / ${p.totalPositions} filled`;
+
+      // Same college indicator
+      if (user?.college && collegeName.toLowerCase() === user.college.toLowerCase()) {
+        document.getElementById('same-college-indicator').style.display = 'inline-flex';
+      }
+
+      // Hackathon information
+      if (p.isHackathon) {
+        document.getElementById('hackathon-banner').style.display = 'block';
+        document.getElementById('hackathon-name-display').textContent = p.hackathonName || 'Hackathon Team';
+        if (p.hackathonUrl) {
+          const hackLink = document.getElementById('hackathon-link-btn');
+          hackLink.href = p.hackathonUrl;
+          hackLink.style.display = 'inline-flex';
+        }
+
+        // Roles needed
+        if (p.rolesNeeded && p.rolesNeeded.length > 0) {
+          const rolesSec = document.getElementById('roles-section');
+          const rolesDiv = document.getElementById('proj-roles');
+          rolesSec.style.display = 'block';
+          rolesDiv.innerHTML = '';
+
+          const roleSelect = document.getElementById('apply-role-select');
+          roleSelect.innerHTML = '<option value="">Select a role to apply for</option>';
+
+          p.rolesNeeded.forEach(r => {
+            const span = document.createElement('span');
+            span.className = 'tag';
+            span.style.background = 'rgba(29,78,216,0.1)';
+            span.style.color = '#1D4ED8';
+            span.style.borderColor = 'rgba(29,78,216,0.25)';
+            span.textContent = `🎯 ${r}`;
+            rolesDiv.appendChild(span);
+
+            const opt = document.createElement('option');
+            opt.value = r;
+            opt.textContent = r;
+            roleSelect.appendChild(opt);
+          });
+
+          // Add a general option
+          const optGen = document.createElement('option');
+          optGen.value = 'General / Other';
+          optGen.textContent = 'General / Other Role';
+          roleSelect.appendChild(optGen);
+
+          document.getElementById('apply-role-wrap').style.display = 'block';
+        }
+      }
+
+      // Status pill
+      const statusEl = document.getElementById('proj-status');
+      if (p.status === 'open') {
+        statusEl.textContent = 'Open';
+        statusEl.className = 'pill pill-green';
+      } else {
+        statusEl.textContent = 'Closed';
+        statusEl.className = 'pill pill-default';
+      }
+
+      // Description
+      document.getElementById('proj-desc').textContent = p.description;
+
+      // Skills
+      const skillsEl = document.getElementById('proj-skills');
+      (p.requiredSkills || []).forEach(s => {
+        const t = document.createElement('span');
+        t.className = 'tag'; t.textContent = s;
+        skillsEl.appendChild(t);
+      });
+
+      // Members
+      const membersEl = document.getElementById('proj-members');
+      document.getElementById('member-count').textContent =
+        `(${p.acceptedMembers.length} / ${p.totalPositions})`;
+
+      if (p.acceptedMembers.length === 0) {
+        membersEl.innerHTML = '<p class="t-sm t-muted" style="margin-top:8px;">No members accepted yet.</p>';
+      } else {
+        p.acceptedMembers.forEach(m => {
+          const row = document.createElement('div');
+          row.className = 'member-row';
+          row.innerHTML = `
+            <div class="avatar avatar-sm">${getInitials(m.name)}</div>
+            <div>
+              <div class="member-name"><a href="/profile.html?id=${m._id}" style="color:inherit;text-decoration:none;font-weight:700;" title="View Builder Profile">${m.name}</a></div>
+              <div class="member-sub">${[m.college, m.branch].filter(Boolean).join(' · ')}</div>
+            </div>`;
+          membersEl.appendChild(row);
+        });
+      }
+
+      // Owner vs non-owner
+      document.getElementById('edit-btn').href = `/edit-project.html?id=${p._id}`;
+      document.getElementById('applicants-link').href = `/applicants.html?id=${p._id}`;
+
+      const isOwner = user && p.owner?._id === user.id;
+
+      if (isOwner) {
+        const oa = document.getElementById('owner-actions');
+        oa.classList.remove('hidden');
+        oa.style.display = 'flex';
+        document.getElementById('apply-card').classList.add('hidden');
+      } else {
+        // Check existing application
+        if (user) {
+          const { data: appData } = await api.get('/api/applications/mine');
+          if (appData) {
+            const existing = appData.applications.find(a => a.project._id === p._id);
+            if (existing) {
+              document.getElementById('apply-form-area').classList.add('hidden');
+              const statusEl = document.getElementById('apply-status');
+              statusEl.classList.remove('hidden');
+
+              let pillClass = 'pill-amber';
+              if (existing.status === 'accepted') pillClass = 'pill-green';
+              if (existing.status === 'rejected') pillClass = 'pill-red';
+
+              statusEl.innerHTML = `
+                <p class="t-sm t-muted" style="margin-bottom:8px;">You already applied to this project.</p>
+                <span class="pill ${pillClass}">${existing.status}</span>`;
+            }
+          }
+        } else {
+          // Not logged in — replace apply form with login prompt
+          document.getElementById('apply-form-area').innerHTML = `
+            <p class="t-sm t-muted" style="margin-bottom:12px;">You need to be logged in to apply.</p>
+            <a href="/login.html" class="btn btn-primary btn-block">Log in to apply</a>`;
+        }
+      }
+
+      document.getElementById('content').classList.remove('hidden');
+    }
+
+    document.getElementById('apply-btn').addEventListener('click', async () => {
+      const message = document.getElementById('apply-message').value.trim();
+      const roleApplied = document.getElementById('apply-role-select')?.value || '';
+      const btn = document.getElementById('apply-btn');
+
+      if (!message) {
+        showAlert('apply-msg', 'Please write a short message before applying.', 'error');
+        return;
+      }
+
+      setLoading(btn, true, 'Apply now');
+      hideAlert('apply-msg');
+
+      const { data, error } = await api.post('/api/applications', { projectId, message, roleApplied });
+
+      setLoading(btn, false, 'Apply now');
+
+      if (error) {
+        if (error.includes('log in') || error.includes('verify')) {
+          showAlert('apply-msg', `${error} <a href="/login.html">Log in here</a>.`, 'error');
+        } else {
+          showAlert('apply-msg', error, 'error');
+        }
+      } else {
+        showAlert('apply-msg', 'Application submitted!', 'success');
+        document.getElementById('apply-form-area').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('close-btn').addEventListener('click', async () => {
+      if (!confirm('Close this project? Students will no longer be able to apply.')) return;
+      const { error } = await api.post(`/api/projects/${projectId}/close`);
+      if (error) { alert(error); } else { location.reload(); }
+    });
+
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to permanently delete this post and all its team applications? This action cannot be undone.')) return;
+      const { error } = await api.delete(`/api/projects/${projectId}`);
+      if (error) {
+        alert('Could not delete: ' + error);
+      } else {
+        alert('Post deleted successfully.');
+        window.location.href = '/dashboard.html';
+      }
+    });
+
+    loadProject();
+  </script>
+</body>
+
+</html>

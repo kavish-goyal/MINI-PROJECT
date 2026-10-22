@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Post a Project or Squad – DevConnect</title>
+  <meta name="description" content="Form hackathon squads and collaborative project teams on DevConnect." />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <span class="navbar-brand">DevConnect</span>
+        <button id="mobile-close" class="btn-ghost">✕</button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <div class="wrap page-body">
+    <div class="posting-studio-wrap">
+
+      <!-- Breadcrumb -->
+      <a href="/dashboard.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Back to Dashboard
+      </a>
+
+      <!-- Page Header -->
+      <div style="margin-bottom:24px;">
+        <h1 id="form-heading" style="font-size:28px;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px;">
+          Create a New Posting
+        </h1>
+        <p class="t-sm t-muted" id="form-subheading" style="font-size:15px;line-height:1.6;">
+          Choose whether you are assembling a competitive Hackathon Squad or recruiting for a Collaborative Project.
+        </p>
+      </div>
+
+      <div class="alert" id="msg"></div>
+
+      <!-- ── TWO-CARD POSTING TYPE SELECTOR ── -->
+      <div class="posting-type-grid" id="type-selector-grid">
+        <!-- Hackathon Option -->
+        <div class="posting-type-card" id="card-type-hackathon" onclick="setPostingType(true)">
+          <div class="posting-type-header">
+            <span class="posting-type-icon">🏆</span>
+            <div class="posting-type-radio" id="radio-hackathon"></div>
+          </div>
+          <div class="posting-type-title">Hackathon Squad</div>
+          <div class="posting-type-desc">
+            Recruiting specific hacker roles (UI/UX, AI/ML, Frontend, Pitch Lead) for an upcoming competition or hackathon.
+          </div>
+        </div>
+
+        <!-- Project Option -->
+        <div class="posting-type-card active-project" id="card-type-project" onclick="setPostingType(false)">
+          <div class="posting-type-header">
+            <span class="posting-type-icon">💻</span>
+            <div class="posting-type-radio" id="radio-project"></div>
+          </div>
+          <div class="posting-type-title">Collaborative Project</div>
+          <div class="posting-type-desc">
+            Recruiting student collaborators for semester capstones, open-source tools, research, or startup MVPs.
+          </div>
+        </div>
+      </div>
+
+      <form id="project-form" novalidate>
+        <!-- Hidden input to track hackathon mode -->
+        <input type="checkbox" id="isHackathon" style="display:none;" />
+
+        <!-- ── SECTION 1: HACKATHON DETAILS (Conditional) ── -->
+        <div class="posting-card-section highlight-amber" id="hackathon-details-section" style="display:none;">
+          <div class="posting-section-title">
+            <span>🏆</span> Hackathon Details &amp; Roles
+          </div>
+          <div class="posting-section-subtitle">
+            Provide the hackathon name and choose which specialized builder roles you need on your squad.
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="hackathonName">Official Hackathon Name *</label>
+              <input type="text" id="hackathonName" placeholder="e.g. Smart India Hackathon, MLH Global, ETHIndia" />
+            </div>
+            <div class="field">
+              <label for="hackathonUrl">Hackathon Website or Devpost URL</label>
+              <input type="url" id="hackathonUrl" placeholder="https://devpost.com/hackathons/..." />
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:8px;">
+            <label for="role-input">Specific Roles Needed in Squad <span class="hint">(click presets to add)</span></label>
+            <div class="suggestion-chips" id="preset-roles-container" style="margin-bottom:10px;">
+              <span class="suggestion-chip" onclick="toggleRoleTag('Frontend Dev')">+ Frontend Dev</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('Backend Dev')">+ Backend Dev</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('Full-Stack Dev')">+ Full-Stack Dev</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('UI/UX Designer')">+ UI/UX Designer</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('AI/ML Engineer')">+ AI/ML Engineer</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('Mobile Dev')">+ Mobile Dev</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('Cloud / DevOps')">+ Cloud / DevOps</span>
+              <span class="suggestion-chip" onclick="toggleRoleTag('Pitch / Product Lead')">+ Pitch Lead</span>
+            </div>
+            <input type="text" id="role-input" placeholder="Or type a custom role and press Enter…" />
+            <div class="tags mt-2" id="roles-display"></div>
+            <input type="hidden" id="roles-data" value="[]" />
+          </div>
+        </div>
+
+        <!-- ── SECTION 2: BASIC OVERVIEW ── -->
+        <div class="posting-card-section">
+          <div class="posting-section-title">
+            <span id="overview-icon">💻</span> <span id="overview-title">Project Overview</span>
+          </div>
+          <div class="posting-section-subtitle">
+            Describe what you're building, the core problem it tackles, and the category.
+          </div>
+
+          <div class="field">
+            <label for="title" id="title-label">Project / Squad Title *</label>
+            <input type="text" id="title" placeholder="e.g. AI-Powered Campus Lost & Found Platform" required />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="category">Category / Domain *</label>
+              <select id="category" required>
+                <option value="">Select a domain</option>
+                <option value="Web">Web Application</option>
+                <option value="Mobile">Mobile Application</option>
+                <option value="AI/ML">Artificial Intelligence / Machine Learning</option>
+                <option value="Cloud/DevOps">Cloud &amp; DevOps</option>
+                <option value="Blockchain/Web3">Blockchain &amp; Web3</option>
+                <option value="Game Dev">Game Development</option>
+                <option value="IoT">IoT / Embedded Hardware</option>
+                <option value="Open Source">Open Source Tool</option>
+                <option value="Other">Other Category</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="totalPositions">Team Positions to Fill * <span class="hint">(total spots)</span></label>
+              <input type="number" id="totalPositions" min="1" max="20" placeholder="e.g. 4" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="description">Detailed Description &amp; Vision *</label>
+            <textarea id="description" rows="5"
+              placeholder="Explain the mission, problem statement, what will be built during the project or hackathon, and who you're excited to collaborate with…"
+              required></textarea>
+          </div>
+        </div>
+
+        <!-- ── SECTION 3: SKILLS & ELIGIBILITY ── -->
+        <div class="posting-card-section">
+          <div class="posting-section-title">
+            <span>⚡</span> Tech Stack &amp; Logistics
+          </div>
+          <div class="posting-section-subtitle">
+            Highlight desired technical skills and application deadline.
+          </div>
+
+          <div class="field">
+            <label for="skills-input">Required Technologies &amp; Skills <span class="hint">(type and press Enter)</span></label>
+            <div class="suggestion-chips" style="margin-bottom:8px;">
+              <span class="suggestion-chip" onclick="toggleSkillTag('React')">+ React</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Node.js')">+ Node.js</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Python')">+ Python</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Figma')">+ Figma</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('PyTorch')">+ PyTorch</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Docker')">+ Docker</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Next.js')">+ Next.js</span>
+              <span class="suggestion-chip" onclick="toggleSkillTag('Flutter')">+ Flutter</span>
+            </div>
+            <input type="text" id="skills-input" placeholder="e.g. React, MongoDB, FastAPI, TailwindCSS" />
+            <div class="tags mt-2" id="skills-display"></div>
+            <input type="hidden" id="skills-data" value="[]" />
+          </div>
+
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="field">
+              <label for="deadline">Application / Team Deadline *</label>
+              <input type="date" id="deadline" required />
+            </div>
+
+            <div class="field">
+              <label for="college">Campus / College Restriction</label>
+              <input type="text" id="college" placeholder="Leave blank for open to all colleges" />
+              <p class="t-sm t-muted" style="margin-top:4px;font-size:12px;">
+                Leave empty for an inter-college team open to builders anywhere.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ACTION BUTTONS ── -->
+        <div class="posting-action-bar">
+          <div class="flex gap-2 items-center" style="flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+              Publish Posting
+            </button>
+            <a href="/dashboard.html" class="btn btn-ghost">Cancel</a>
+          </div>
+          <button type="button" class="btn btn-danger hidden" id="delete-btn">
+            Delete Post
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    let skills = [];
+    let roles = [];
+
+    // ── Helper: Render skills ──────────────────────────────────────────────
+    function renderSkillTags() {
+      const display = document.getElementById('skills-display');
+      display.innerHTML = '';
+      skills.forEach((skill, i) => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.style.cursor = 'pointer';
+        tag.innerHTML = `${escapeHtml(skill)} <span class="tag-remove" title="Remove">✕</span>`;
+        tag.querySelector('.tag-remove').onclick = () => { skills.splice(i, 1); renderSkillTags(); };
+        display.appendChild(tag);
+      });
+      document.getElementById('skills-data').value = JSON.stringify(skills);
+    }
+
+    function toggleSkillTag(skillName) {
+      if (!skills.includes(skillName)) {
+        skills.push(skillName);
+        renderSkillTags();
+      }
+    }
+
+    document.getElementById('skills-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val && !skills.includes(val)) {
+          skills.push(val);
+          renderSkillTags();
+        }
+        e.target.value = '';
+      }
+    });
+
+    // ── Helper: Render hackathon roles ─────────────────────────────────────
+    function renderRoleTags() {
+      const display = document.getElementById('roles-display');
+      display.innerHTML = '';
+      roles.forEach((role, i) => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.style.background = 'var(--amber-bg)';
+        tag.style.color = '#92400E';
+        tag.style.borderColor = 'var(--amber-border)';
+        tag.style.cursor = 'pointer';
+        tag.innerHTML = `🎯 ${escapeHtml(role)} <span class="tag-remove" style="color:#92400E;margin-left:6px;" title="Remove">✕</span>`;
+        tag.querySelector('.tag-remove').onclick = () => { roles.splice(i, 1); renderRoleTags(); };
+        display.appendChild(tag);
+      });
+      document.getElementById('roles-data').value = JSON.stringify(roles);
+    }
+
+    function toggleRoleTag(roleName) {
+      if (!roles.includes(roleName)) {
+        roles.push(roleName);
+        renderRoleTags();
+      }
+    }
+
+    document.getElementById('role-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val && !roles.includes(val)) {
+          roles.push(val);
+          renderRoleTags();
+        }
+        e.target.value = '';
+      }
+    });
+
+    // ── Helper: Set posting type (Hackathon vs Regular) ────────────────────
+    function setPostingType(isHack) {
+      const checkbox = document.getElementById('isHackathon');
+      checkbox.checked = isHack;
+
+      const cardHack = document.getElementById('card-type-hackathon');
+      const cardProj = document.getElementById('card-type-project');
+      const hackSec = document.getElementById('hackathon-details-section');
+      const overviewIcon = document.getElementById('overview-icon');
+      const overviewTitle = document.getElementById('overview-title');
+      const titleLabel = document.getElementById('title-label');
+      const titleInput = document.getElementById('title');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (isHack) {
+        cardHack.className = 'posting-type-card active-hackathon';
+        cardProj.className = 'posting-type-card';
+        hackSec.style.display = 'block';
+        overviewIcon.textContent = '🏆';
+        overviewTitle.textContent = 'Hackathon Squad Details';
+        titleLabel.textContent = 'Hackathon Squad Title *';
+        titleInput.placeholder = 'e.g. Autonomous AI Drone – HackMIT Squad';
+        if (!isEdit) {
+          document.getElementById('form-heading').textContent = '🏆 Form a Hackathon Squad';
+          document.getElementById('form-subheading').textContent = 'Build your dream squad for upcoming competitions. Define specific roles like UI/UX, AI/ML, and pitch lead.';
+          submitBtn.textContent = 'Publish Hackathon Squad';
+        }
+      } else {
+        cardHack.className = 'posting-type-card';
+        cardProj.className = 'posting-type-card active-project';
+        hackSec.style.display = 'none';
+        overviewIcon.textContent = '💻';
+        overviewTitle.textContent = 'Project Overview';
+        titleLabel.textContent = 'Project Title *';
+        titleInput.placeholder = 'e.g. AI-Powered Campus Lost & Found Platform';
+        if (!isEdit) {
+          document.getElementById('form-heading').textContent = '💻 Post a Collaborative Project';
+          document.getElementById('form-subheading').textContent = 'Recruit peers for semester capstones, open-source tools, research initiatives, or startup MVPs.';
+          submitBtn.textContent = 'Publish Project';
+        }
+      }
+    }
+
+    // ── Detect edit mode (URL has ?id=...) ────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get('id');
+    const isEdit = Boolean(projectId);
+
+    // Set minimum deadline to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('deadline').min = tomorrow.toISOString().slice(0, 10);
+
+    // ── Helper: Escape HTML ────────────────────────────────────────────────
+    function escapeHtml(str = '') {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ── Initialize ─────────────────────────────────────────────────────────
+    async function init() {
+      const user = await renderNavbar();
+      if (!user) { window.location.href = '/login.html'; return; }
+
+      const typeParam = params.get('type');
+      if (typeParam === 'hackathon') {
+        setPostingType(true);
+      } else {
+        setPostingType(false);
+      }
+
+      if (!isEdit) {
+        if (user.college) {
+          document.getElementById('college').value = user.college;
+        }
+      } else {
+        document.getElementById('page-title').textContent = 'Edit Posting – DevConnect';
+        document.getElementById('form-heading').textContent = 'Edit Posting';
+        document.getElementById('submit-btn').textContent = 'Save Changes';
+
+        const deleteBtn = document.getElementById('delete-btn');
+        if (deleteBtn) {
+          deleteBtn.classList.remove('hidden');
+          deleteBtn.addEventListener('click', async () => {
+            const isHack = document.getElementById('isHackathon').checked;
+            const typeStr = isHack ? 'hackathon squad' : 'project';
+            if (!confirm(`Are you sure you want to permanently delete this ${typeStr}?\n\nThis will remove the posting and all associated team applications.`)) return;
+            const { error: delErr } = await api.delete(`/api/projects/${projectId}`);
+            if (delErr) {
+              alert('Could not delete: ' + delErr);
+            } else {
+              alert(`The ${typeStr} was deleted successfully.`);
+              window.location.href = '/dashboard.html';
+            }
+          });
+        }
+
+        // Load existing project data
+        const { data, error } = await api.get(`/api/projects/${projectId}`);
+        if (error) { showAlert('msg', error, 'error'); return; }
+
+        const p = data.project;
+        document.getElementById('title').value = p.title || '';
+        document.getElementById('description').value = p.description || '';
+        document.getElementById('category').value = p.category || '';
+        document.getElementById('totalPositions').value = p.totalPositions || '';
+        document.getElementById('college').value = p.college || '';
+        document.getElementById('deadline').value = p.deadline ? p.deadline.slice(0, 10) : '';
+
+        skills = [...(p.requiredSkills || [])];
+        renderSkillTags();
+
+        if (p.isHackathon) {
+          setPostingType(true);
+          document.getElementById('hackathonName').value = p.hackathonName || '';
+          document.getElementById('hackathonUrl').value = p.hackathonUrl || '';
+          roles = [...(p.rolesNeeded || [])];
+          renderRoleTags();
+        } else {
+          setPostingType(false);
+        }
+      }
+    }
+
+    // ── Form Submit ────────────────────────────────────────────────────────
+    document.getElementById('project-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const isHackathonVal = document.getElementById('isHackathon').checked;
+
+      const payload = {
+        title: document.getElementById('title').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        category: document.getElementById('category').value,
+        totalPositions: Number(document.getElementById('totalPositions').value),
+        deadline: document.getElementById('deadline').value,
+        college: document.getElementById('college').value.trim(),
+        requiredSkills: JSON.parse(document.getElementById('skills-data').value || '[]'),
+        isHackathon: isHackathonVal,
+        hackathonName: isHackathonVal ? document.getElementById('hackathonName').value.trim() : '',
+        hackathonUrl: isHackathonVal ? document.getElementById('hackathonUrl').value.trim() : '',
+        rolesNeeded: isHackathonVal ? JSON.parse(document.getElementById('roles-data').value || '[]') : [],
+      };
+
+      if (!payload.title || !payload.description || !payload.category || !payload.deadline) {
+        showAlert('msg', 'Please fill in all required fields (Title, Category, Positions, Description, Deadline).', 'error');
+        return;
+      }
+
+      if (isHackathonVal && !payload.hackathonName) {
+        showAlert('msg', 'Please enter the Hackathon Name for your hackathon squad.', 'error');
+        return;
+      }
+
+      setLoading(btn, true, isEdit ? 'Save Changes' : (isHackathonVal ? 'Publish Hackathon Squad' : 'Publish Project'));
+      hideAlert('msg');
+
+      let result;
+      if (isEdit) {
+        result = await api.put(`/api/projects/${projectId}`, payload);
+      } else {
+        result = await api.post('/api/projects', payload);
+      }
+
+      setLoading(btn, false, isEdit ? 'Save Changes' : (isHackathonVal ? 'Publish Hackathon Squad' : 'Publish Project'));
+
+      if (result.error) {
+        showAlert('msg', result.error, 'error');
+      } else {
+        const newId = result.data?.project?._id || projectId;
+        showAlert('msg', isEdit ? 'Posting updated successfully!' : 'Posting published successfully! 🎉', 'success');
+        setTimeout(() => { window.location.href = `/project.html?id=${newId}`; }, 900);
+      }
+    });
+
+    init();
+  </script>
+</body>
+
+</html>

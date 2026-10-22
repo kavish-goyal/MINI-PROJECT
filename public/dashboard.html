@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – DevConnect</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <span class="navbar-brand">
+          <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+          <span class="navbar-brand-text">DevConnect</span>
+        </span>
+        <button id="mobile-close" class="btn-ghost">✕</button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <div class="dash-layout">
+
+    <!-- Sidebar -->
+    <aside class="dash-sidebar">
+      <div class="dash-nav-label">Main</div>
+      <a href="/dashboard.html" class="dash-nav-item active" id="nav-projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg>
+        My Projects
+      </a>
+      <a href="/dashboard.html#applications" class="dash-nav-item" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+        My Applications
+      </a>
+      <div class="dash-sidebar-sep"></div>
+      <div class="dash-nav-label">Account</div>
+      <a href="/profile.html" class="dash-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        My Profile
+      </a>
+      <a href="/edit-project.html" class="dash-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        New Project
+      </a>
+      <a href="/discover.html" class="dash-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+        Discover
+      </a>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="dash-main">
+
+      <!-- Verify email banner -->
+      <div id="verify-banner" class="verify-banner hidden">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        Your email is not verified. Some features are restricted.
+        <a href="/verify-email.html" style="color:inherit;text-decoration:underline;margin-left:4px;">Resend
+          verification</a>
+      </div>
+
+      <!-- My Projects panel -->
+      <div id="panel-projects">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+          <div>
+            <h1 class="dash-page-title" id="dash-heading">My Projects</h1>
+            <p class="t-sm t-muted" id="greeting" style="margin-top:4px;"></p>
+          </div>
+          <a href="/edit-project.html" class="btn btn-primary">+ New Project</a>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="stat-cards" id="stat-cards" style="display:none;">
+          <div class="stat-card">
+            <div class="stat-card-num" id="stat-total">0</div>
+            <div class="stat-card-label">Total Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-num" id="stat-open">0</div>
+            <div class="stat-card-label">Open Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-num" id="stat-members">0</div>
+            <div class="stat-card-label">Total Members</div>
+          </div>
+        </div>
+
+        <div class="dash-section-title" style="margin-top:24px;">Your Projects</div>
+
+        <div id="my-projects-loading">
+          <div class="spinner"></div>
+        </div>
+        <div class="proj-list" id="my-projects-list" style="display:none;"></div>
+        <div class="empty hidden" id="my-projects-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 9h6M9 13h4" />
+          </svg>
+          <p>You haven't created any projects yet.</p>
+          <a href="/edit-project.html" class="btn btn-primary btn-sm">Create your first project</a>
+        </div>
+      </div>
+
+      <!-- My Applications panel (hidden by default) -->
+      <div id="panel-applications" class="hidden">
+        <div style="margin-bottom:24px;">
+          <h1 class="dash-page-title">My Applications</h1>
+          <p class="t-sm t-muted" style="margin-top:4px;">Projects you've applied to join.</p>
+        </div>
+
+        <div class="dash-section-title">Applications</div>
+
+        <div id="my-apps-loading">
+          <div class="spinner"></div>
+        </div>
+        <div class="app-list" id="my-apps-list" style="display:none;"></div>
+        <div class="empty hidden" id="my-apps-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <p>You haven't applied to any projects yet.</p>
+          <a href="/discover.html" class="btn btn-secondary btn-sm">Discover projects</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    // Tab switching
+    function showPanel(panel) {
+      document.getElementById('panel-projects').classList.toggle('hidden', panel !== 'projects');
+      document.getElementById('panel-applications').classList.toggle('hidden', panel !== 'applications');
+      document.getElementById('nav-projects').classList.toggle('active', panel === 'projects');
+      document.getElementById('nav-applications').classList.toggle('active', panel === 'applications');
+    }
+
+    // Handle hash
+    if (window.location.hash === '#applications') {
+      showPanel('applications');
+    }
+
+    document.getElementById('nav-projects').addEventListener('click', e => {
+      e.preventDefault();
+      history.pushState(null, '', '/dashboard.html');
+      showPanel('projects');
+    });
+
+    document.getElementById('nav-applications').addEventListener('click', e => {
+      e.preventDefault();
+      history.pushState(null, '', '/dashboard.html#applications');
+      showPanel('applications');
+    });
+
+    // ── Build project row ──────────────────────────────────────────────────
+    function buildProjectRow(p) {
+      const spotsLeft = p.totalPositions - p.acceptedMembers.length;
+      const statusPillClass = p.status === 'open' ? 'pill-green' : 'pill-default';
+
+      const row = document.createElement('div');
+      row.className = 'proj-row';
+      row.innerHTML = `
+        <div class="proj-row-info">
+          <div class="proj-row-title">${p.title}</div>
+          <div class="proj-row-meta">
+            ${new Date(p.deadline).toLocaleDateString()} &middot;
+            ${p.acceptedMembers.length}/${p.totalPositions} members &middot;
+            <span class="pill ${statusPillClass}" style="font-size:11px;padding:1px 8px;">${p.status}</span>
+          </div>
+        </div>
+        <div class="proj-row-actions">
+          <a href="/project.html?id=${p._id}" class="btn btn-secondary btn-sm">View</a>
+          <a href="/edit-project.html?id=${p._id}" class="btn btn-ghost btn-sm">Edit</a>
+          <a href="/applicants.html?id=${p._id}" class="btn btn-ghost btn-sm">Applicants</a>
+          <button type="button" class="btn btn-danger btn-sm" onclick="deleteDashboardProject('${p._id}', '${p.title.replace(/'/g, "\\'")}')">Delete</button>
+        </div>`;
+      return row;
+    }
+
+    // ── Build application row ──────────────────────────────────────────────
+    function buildAppRow(app) {
+      const statusMap = {
+        accepted: 'pill-green',
+        rejected: 'pill-red',
+        withdrawn: 'pill-default',
+        pending: 'pill-amber',
+      };
+      const pillClass = statusMap[app.status] || 'pill-default';
+
+      const row = document.createElement('div');
+      row.className = 'app-row';
+      row.innerHTML = `
+        <div class="app-row-info">
+          <div class="app-row-title">${app.project?.title || 'Project deleted'}</div>
+          <div class="app-row-meta">
+            ${app.project?.category || ''} &middot;
+            Applied ${new Date(app.createdAt).toLocaleDateString()} &middot;
+            <span class="pill ${pillClass}" style="font-size:11px;padding:1px 8px;">${app.status}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          ${app.project?._id ? `<a href="/project.html?id=${app.project._id}" class="btn btn-secondary btn-sm">View project</a>` : ''}
+          ${app.status === 'pending'
+          ? `<button class="btn btn-danger btn-sm withdraw-btn" data-id="${app._id}">Withdraw</button>`
+          : ''}
+        </div>`;
+      return row;
+    }
+
+    async function loadMyProjects() {
+      const { data, error } = await api.get('/api/projects/mine/list');
+      document.getElementById('my-projects-loading').style.display = 'none';
+
+      if (error || !data || data.projects.length === 0) {
+        document.getElementById('my-projects-empty').classList.remove('hidden');
+        return;
+      }
+      const list = document.getElementById('my-projects-list');
+      data.projects.forEach(p => list.appendChild(buildProjectRow(p)));
+      list.style.display = '';
+
+      // Populate stat cards
+      const total = data.projects.length;
+      const open = data.projects.filter(p => p.status === 'open').length;
+      const members = data.projects.reduce((acc, p) => acc + (p.acceptedMembers?.length || 0), 0);
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-open').textContent = open;
+      document.getElementById('stat-members').textContent = members;
+      document.getElementById('stat-cards').style.display = '';
+    }
+
+    async function loadMyApplications() {
+      const { data, error } = await api.get('/api/applications/mine');
+      document.getElementById('my-apps-loading').style.display = 'none';
+
+      if (error || !data || data.applications.length === 0) {
+        document.getElementById('my-apps-empty').classList.remove('hidden');
+        return;
+      }
+      const list = document.getElementById('my-apps-list');
+      data.applications.forEach(app => list.appendChild(buildAppRow(app)));
+      list.style.display = '';
+
+      // Withdraw
+      list.addEventListener('click', async e => {
+        if (!e.target.classList.contains('withdraw-btn')) return;
+        const id = e.target.dataset.id;
+        if (!confirm('Withdraw this application?')) return;
+        const { error } = await api.delete(`/api/applications/${id}`);
+        if (error) { alert(error); } else { location.reload(); }
+      });
+    }
+
+    async function deleteDashboardProject(id, title) {
+      if (!confirm(`Are you sure you want to permanently delete "${title}"?\n\nThis will remove the post and all its team applications.`)) return;
+      const { error } = await api.delete(`/api/projects/${id}`);
+      if (error) {
+        alert('Could not delete: ' + error);
+      } else {
+        alert('Post deleted successfully.');
+        loadMyProjects();
+      }
+    }
+
+    async function init() {
+      const user = await renderNavbar();
+      if (!user) { window.location.href = '/login.html'; return; }
+
+      document.getElementById('greeting').textContent = `Welcome back, ${user.name}.`;
+
+      if (!user.isVerified) {
+        document.getElementById('verify-banner').classList.remove('hidden');
+      }
+
+      loadMyProjects();
+      loadMyApplications();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

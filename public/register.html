@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account – DevConnect</title>
+  <meta name="description" content="Create a free DevConnect account to find teammates and build projects." />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+    </div>
+  </nav>
+
+  <div class="auth-shell">
+    <div class="auth-panel">
+      <a href="/" class="auth-logo">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="auth-logo-img" />
+        <span class="auth-brand-text">DevConnect</span>
+      </a>
+
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-sub">Free for students. No credit card required.</p>
+
+      <div class="alert" id="msg"></div>
+
+      <form id="register-form" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" placeholder="Alice Sharma" required autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="alice@college.edu" required autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label for="college">
+            College / University
+            <span class="hint">(optional, helps find peers)</span>
+          </label>
+          <input type="text" id="college" name="college" placeholder="e.g. IIT Delhi, BITS Pilani, Stanford..."
+            autocomplete="organization" />
+        </div>
+
+        <div class="field">
+          <label for="password">
+            Password
+            <span class="hint">(min 8 characters)</span>
+          </label>
+          <div class="pw-wrap">
+            <input type="password" id="password" name="password" placeholder="Create a strong password" required
+              autocomplete="new-password" />
+            <button type="button" class="pw-toggle" id="pw-toggle-reg" data-target="password"
+              aria-label="Show password">
+              <!-- Eye icon (shown by default) -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <!-- Eye-off icon (hidden by default) -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;">
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="submit-btn" style="margin-top:4px;">
+          Create account
+        </button>
+      </form>
+
+      <!-- Instant verify banner if link generated -->
+      <div id="verify-action-box" class="card"
+        style="display:none;margin-top:16px;background:var(--accent-bg);border:1px solid rgba(29,78,216,0.25);padding:14px;border-radius:var(--r);text-align:center;">
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Ready to activate your account?
+        </p>
+        <a id="direct-verify-link" href="#" class="btn btn-primary btn-sm btn-block">Verify & Log In Now</a>
+      </div>
+
+      <div class="divider-label">already have an account?</div>
+
+      <a href="/login.html" class="btn btn-secondary btn-block">Log in</a>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    renderNavbar();
+    initPasswordToggle('pw-toggle-reg');
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const college = document.getElementById('college').value.trim();
+      const password = document.getElementById('password').value;
+
+      setLoading(btn, true, 'Create account');
+      hideAlert('msg');
+      document.getElementById('verify-action-box').style.display = 'none';
+
+      const { data, error } = await api.post('/api/auth/register', { name, email, college, password });
+
+      setLoading(btn, false, 'Create account');
+
+      if (error) {
+        showAlert('msg', error, 'error');
+      } else {
+        showAlert('msg', data.message, 'success');
+
+        if (data.verifyUrl) {
+          const box = document.getElementById('verify-action-box');
+          const link = document.getElementById('direct-verify-link');
+          link.href = data.verifyUrl;
+          box.style.display = 'block';
+        }
+        document.getElementById('register-form').reset();
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover Projects & Hackathons – DevConnect</title>
+  <meta name="description"
+    content="Browse and search student projects and hackathon squads on DevConnect. Find a team and build together." />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <span class="navbar-brand">DevConnect</span>
+        <button id="mobile-close" class="btn-ghost">✕</button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <div class="wrap page-body">
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div>
+        <p class="section-label">Browse</p>
+        <h1>Discover Projects</h1>
+        <p>Find open student projects and apply to join a team.</p>
+      </div>
+      <a href="/edit-project.html" class="btn btn-primary" id="create-btn" style="display:none;">+ Create Project</a>
+    </div>
+
+    <!-- Type pills: All, Hackathon teams, Regular -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+      <button class="btn btn-primary btn-sm type-tab active" data-type="all" id="tab-all">All Projects</button>
+      <button class="btn btn-secondary btn-sm type-tab" data-type="hackathon" id="tab-hackathon"
+        style="display:inline-flex;align-items:center;gap:6px;">
+        <span>🏆</span> Hackathon Teams
+      </button>
+      <button class="btn btn-secondary btn-sm type-tab" data-type="regular" id="tab-regular">
+        💻 Regular Projects
+      </button>
+
+      <!-- Quick toggle: Same College -->
+      <button class="btn btn-secondary btn-sm" id="same-college-btn"
+        style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;">
+        <span>🏫</span>
+        <span id="same-college-btn-text">My College Only</span>
+      </button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <input type="search" id="search-input" class="filter-search" placeholder="Search title or description…"
+        autocomplete="off" />
+      <select id="category-filter" class="filter-select">
+        <option value="">All categories</option>
+        <option>Web</option>
+        <option>Mobile</option>
+        <option>AI/ML</option>
+        <option>Game Dev</option>
+        <option>IoT</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="college-filter" class="filter-select" placeholder="Filter by college…"
+        autocomplete="off" />
+      <input type="text" id="skill-filter" class="filter-select" placeholder="Filter by skill…" autocomplete="off" />
+      <button class="btn btn-primary" id="search-btn">Search</button>
+      <button class="btn btn-secondary" id="clear-btn">Clear</button>
+    </div>
+
+    <!-- Active College Filter Banner -->
+    <div id="active-college-banner"
+      style="display:none;background:var(--accent-bg);border:1px solid rgba(29,78,216,0.22);border-radius:var(--r);padding:10px 16px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text);">
+        <span>🏫</span>
+        <span>Showing projects matching college: <strong id="active-college-name"></strong></span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="clear-college-filter" style="font-size:12px;color:var(--accent);">✕ Reset
+        College Filter</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="projects-loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Project grid -->
+    <div class="projects-grid" id="projects-grid" style="display:none;"></div>
+
+    <!-- Empty state -->
+    <div class="empty hidden" id="projects-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <p id="empty-message">No projects match your filters. Try different terms or <a href="/edit-project.html">create
+          one</a>.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+
+  <!-- Card template -->
+  <template id="proj-card-tpl">
+    <div class="proj-card">
+      <div class="proj-card-header">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+            <span class="pill pill-blue js-category"></span>
+            <span class="pill js-hackathon-badge"
+              style="display:none;background:linear-gradient(135deg, rgba(217,119,6,0.15), rgba(180,83,9,0.2));color:#B45309;border:1px solid rgba(180,83,9,0.3);font-weight:700;">
+              🏆 <span class="js-hackathon-name">Hackathon</span>
+            </span>
+            <span class="pill js-same-college-badge"
+              style="display:none;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);font-weight:600;">
+              🏫 Same College
+            </span>
+          </div>
+          <div class="proj-card-title js-title"></div>
+          <div class="js-college-meta"
+            style="font-size:12px;color:var(--text-3);margin-top:2px;display:flex;align-items:center;gap:4px;">
+            <span>🏫</span>
+            <span class="js-college-text"></span>
+          </div>
+        </div>
+      </div>
+
+      <p class="proj-card-desc js-desc"></p>
+
+      <!-- Hackathon roles needed row -->
+      <div class="js-roles-wrap" style="display:none;margin-top:2px;">
+        <div
+          style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">
+          Seeking Team Roles:
+        </div>
+        <div class="tags js-roles-tags"></div>
+      </div>
+
+      <div class="tags js-skills"></div>
+
+      <div class="proj-card-footer">
+        <div class="proj-card-meta">
+          <span class="js-spots"></span>
+          <span class="js-deadline"></span>
+        </div>
+        <a class="btn btn-secondary btn-sm js-link" href="#">View team</a>
+      </div>
+    </div>
+  </template>
+
+  <script src="/js/api.js"></script>
+  <script>
+    let currentPage = 1;
+    let currentUser = null;
+    let activeType = 'all'; // 'all' | 'hackathon' | 'regular'
+    let sameCollegeActive = false;
+
+    // Check URL parameters on page load (?type=hackathon or ?type=regular)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type');
+    if (initialType === 'hackathon' || initialType === 'regular') {
+      activeType = initialType;
+    }
+
+    function updatePageHeader(type) {
+      const titleEl = document.querySelector('.page-head h1');
+      const descEl = document.querySelector('.page-head p:not(.section-label)');
+      const labelEl = document.querySelector('.page-head .section-label');
+      const createBtn = document.getElementById('create-btn');
+
+      if (type === 'hackathon') {
+        if (titleEl) titleEl.textContent = '🏆 Discover Hackathon Teams';
+        if (descEl) descEl.textContent = 'Find specialized roles—UI/UX, ML, Frontend, Pitch Leads—and assemble your winning hackathon squad.';
+        if (labelEl) labelEl.textContent = 'Hackathon Squads';
+        if (createBtn) {
+          createBtn.textContent = '+ Form Hackathon Team';
+          createBtn.href = '/edit-project.html?type=hackathon';
+        }
+      } else if (type === 'regular') {
+        if (titleEl) titleEl.textContent = '💻 Discover Projects';
+        if (descEl) descEl.textContent = 'Join semester projects, research prototypes, and open-source applications built by students.';
+        if (labelEl) labelEl.textContent = 'Collaborative Projects';
+        if (createBtn) {
+          createBtn.textContent = '+ Create Project';
+          createBtn.href = '/edit-project.html';
+        }
+      } else {
+        if (titleEl) titleEl.textContent = 'Discover Teams & Projects';
+        if (descEl) descEl.textContent = 'Explore hackathon squads and collaborative student projects seeking builders.';
+        if (labelEl) labelEl.textContent = 'Browse All';
+        if (createBtn) {
+          createBtn.textContent = '+ Create Project / Team';
+          createBtn.href = '/edit-project.html';
+        }
+      }
+    }
+
+    // Set initial tab styling
+    document.querySelectorAll('.type-tab').forEach(t => {
+      if (t.dataset.type === activeType) {
+        t.classList.add('btn-primary', 'active');
+        t.classList.remove('btn-secondary');
+      } else {
+        t.classList.remove('btn-primary', 'active');
+        t.classList.add('btn-secondary');
+      }
+    });
+    updatePageHeader(activeType);
+
+    renderNavbar().then(user => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('create-btn').style.display = '';
+        if (user.college) {
+          document.getElementById('same-college-btn-text').textContent = `My College (${user.college})`;
+        }
+      }
+    });
+
+    // ── Tab filter handlers ───────────────────────────────────────────────
+    document.querySelectorAll('.type-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.type-tab').forEach(t => {
+          t.classList.remove('btn-primary', 'active');
+          t.classList.add('btn-secondary');
+        });
+        tab.classList.add('btn-primary', 'active');
+        tab.classList.remove('btn-secondary');
+        activeType = tab.dataset.type;
+
+        // Update URL query parameter without page reload
+        const newUrl = new URL(window.location);
+        if (activeType === 'all') {
+          newUrl.searchParams.delete('type');
+        } else {
+          newUrl.searchParams.set('type', activeType);
+        }
+        window.history.replaceState({}, '', newUrl);
+
+        updatePageHeader(activeType);
+        currentPage = 1;
+        loadProjects(1);
+      });
+    });
+
+    // ── Same college toggle handler ───────────────────────────────────────
+    const sameCollegeBtn = document.getElementById('same-college-btn');
+    sameCollegeBtn.addEventListener('click', () => {
+      if (!currentUser) {
+        alert('Please log in to filter by your college.');
+        window.location.href = '/login.html';
+        return;
+      }
+      if (!currentUser.college) {
+        const goProfile = confirm('You haven\'t set your college in your profile yet. Would you like to update your profile now?');
+        if (goProfile) window.location.href = '/profile.html';
+        return;
+      }
+
+      sameCollegeActive = !sameCollegeActive;
+      if (sameCollegeActive) {
+        sameCollegeBtn.classList.remove('btn-secondary');
+        sameCollegeBtn.classList.add('btn-primary');
+        // Clear manual college input so it doesn't conflict
+        document.getElementById('college-filter').value = '';
+      } else {
+        sameCollegeBtn.classList.remove('btn-primary');
+        sameCollegeBtn.classList.add('btn-secondary');
+      }
+      currentPage = 1;
+      loadProjects(1);
+    });
+
+    document.getElementById('clear-college-filter').addEventListener('click', () => {
+      sameCollegeActive = false;
+      sameCollegeBtn.classList.remove('btn-primary');
+      sameCollegeBtn.classList.add('btn-secondary');
+      document.getElementById('college-filter').value = '';
+      currentPage = 1;
+      loadProjects(1);
+    });
+
+    function buildCard(p) {
+      const tpl = document.getElementById('proj-card-tpl').content.cloneNode(true);
+      const card = tpl.querySelector('.proj-card');
+
+      const spotsLeft = p.totalPositions - (p.acceptedMembers?.length || 0);
+      const skills = p.requiredSkills || [];
+      const visible = skills.slice(0, 4);
+      const extra = skills.length - 4;
+
+      card.querySelector('.js-title').textContent = p.title;
+      card.querySelector('.js-category').textContent = p.category;
+      card.querySelector('.js-desc').textContent = p.description;
+      card.querySelector('.js-spots').textContent = `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left`;
+      card.querySelector('.js-deadline').textContent = `Deadline ${new Date(p.deadline).toLocaleDateString()}`;
+      card.querySelector('.js-link').href = `/project.html?id=${p._id}`;
+
+      // College display
+      const collegeName = p.college || p.owner?.college || 'Open to all colleges';
+      card.querySelector('.js-college-text').textContent = collegeName;
+
+      // Same college badge
+      if (currentUser?.college && collegeName.toLowerCase() === currentUser.college.toLowerCase()) {
+        card.querySelector('.js-same-college-badge').style.display = 'inline-flex';
+      }
+
+      // Hackathon styling
+      if (p.isHackathon) {
+        card.style.borderColor = 'rgba(217,119,6,0.35)';
+        const hackBadge = card.querySelector('.js-hackathon-badge');
+        hackBadge.style.display = 'inline-flex';
+        card.querySelector('.js-hackathon-name').textContent = p.hackathonName || 'Hackathon Team';
+
+        // Roles needed
+        if (p.rolesNeeded && p.rolesNeeded.length > 0) {
+          const rolesWrap = card.querySelector('.js-roles-wrap');
+          const rolesTags = card.querySelector('.js-roles-tags');
+          rolesWrap.style.display = 'block';
+          p.rolesNeeded.forEach(role => {
+            const rTag = document.createElement('span');
+            rTag.className = 'tag';
+            rTag.style.background = 'rgba(29,78,216,0.08)';
+            rTag.style.color = '#1D4ED8';
+            rTag.style.borderColor = 'rgba(29,78,216,0.25)';
+            rTag.textContent = role;
+            rolesTags.appendChild(rTag);
+          });
+        }
+      }
+
+      // Skills tags
+      const tagsEl = card.querySelector('.js-skills');
+      visible.forEach(s => {
+        const t = document.createElement('span');
+        t.className = 'tag';
+        t.textContent = s;
+        tagsEl.appendChild(t);
+      });
+      if (extra > 0) {
+        const t = document.createElement('span');
+        t.className = 'tag';
+        t.textContent = `+${extra}`;
+        tagsEl.appendChild(t);
+      }
+
+      if (p.status === 'closed') {
+        const statusPill = document.createElement('span');
+        statusPill.className = 'pill pill-default';
+        statusPill.textContent = 'Closed';
+        statusPill.style.marginLeft = '4px';
+        card.querySelector('.proj-card-header').appendChild(statusPill);
+      }
+
+      return card;
+    }
+
+    async function loadProjects(page = 1) {
+      const search = document.getElementById('search-input').value.trim();
+      const category = document.getElementById('category-filter').value;
+      const college = document.getElementById('college-filter').value.trim();
+      const skill = document.getElementById('skill-filter').value.trim();
+
+      const params = new URLSearchParams({ page, limit: 10 });
+      if (search) params.set('search', search);
+      if (category) params.set('category', category);
+      if (skill) params.set('skill', skill);
+
+      if (activeType === 'hackathon') {
+        params.set('isHackathon', 'true');
+      } else if (activeType === 'regular') {
+        params.set('isHackathon', 'false');
+      }
+
+      if (sameCollegeActive) {
+        params.set('sameCollege', 'true');
+      } else if (college) {
+        params.set('college', college);
+      }
+
+      document.getElementById('projects-loading').style.display = '';
+      document.getElementById('projects-grid').style.display = 'none';
+      document.getElementById('projects-empty').classList.add('hidden');
+
+      const { data, error } = await api.get(`/api/projects?${params}`);
+
+      document.getElementById('projects-loading').style.display = 'none';
+
+      // Update college banner
+      const banner = document.getElementById('active-college-banner');
+      if (data?.activeCollegeFilter) {
+        banner.style.display = 'flex';
+        document.getElementById('active-college-name').textContent = data.activeCollegeFilter;
+      } else {
+        banner.style.display = 'none';
+      }
+
+      if (error || !data) {
+        document.getElementById('empty-message').textContent = error || 'Could not load projects. Please try again.';
+        document.getElementById('projects-empty').classList.remove('hidden');
+        return;
+      }
+
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = '';
+
+      if (data.projects.length === 0) {
+        document.getElementById('empty-message').innerHTML = 'No projects match your filters. Try different terms or <a href="/edit-project.html">create one</a>.';
+        document.getElementById('projects-empty').classList.remove('hidden');
+        return;
+      }
+
+      data.projects.forEach(p => grid.appendChild(buildCard(p)));
+      grid.style.display = '';
+
+      renderPagination(data.page, data.totalPages);
+    }
+
+    function renderPagination(page, totalPages) {
+      const el = document.getElementById('pagination');
+      el.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      if (page > 1) {
+        const prev = document.createElement('button');
+        prev.className = 'btn btn-secondary btn-sm';
+        prev.textContent = '← Previous';
+        prev.onclick = () => { currentPage--; loadProjects(currentPage); };
+        el.appendChild(prev);
+      }
+
+      const info = document.createElement('span');
+      info.className = 't-sm t-muted';
+      info.textContent = `Page ${page} of ${totalPages}`;
+      el.appendChild(info);
+
+      if (page < totalPages) {
+        const next = document.createElement('button');
+        next.className = 'btn btn-secondary btn-sm';
+        next.textContent = 'Next →';
+        next.onclick = () => { currentPage++; loadProjects(currentPage); };
+        el.appendChild(next);
+      }
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => { currentPage = 1; loadProjects(1); });
+
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      document.getElementById('category-filter').value = '';
+      document.getElementById('college-filter').value = '';
+      document.getElementById('skill-filter').value = '';
+      sameCollegeActive = false;
+      sameCollegeBtn.classList.remove('btn-primary');
+      sameCollegeBtn.classList.add('btn-secondary');
+
+      document.querySelectorAll('.type-tab').forEach(t => {
+        t.classList.remove('btn-primary', 'active');
+        t.classList.add('btn-secondary');
+      });
+      document.getElementById('tab-all').classList.add('btn-primary', 'active');
+      document.getElementById('tab-all').classList.remove('btn-secondary');
+      activeType = 'all';
+
+      currentPage = 1;
+      loadProjects(1);
+    });
+
+    ['search-input', 'college-filter', 'skill-filter'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') { currentPage = 1; loadProjects(1); }
+      });
+    });
+
+    loadProjects();
+  </script>
+</body>
+
+</html>

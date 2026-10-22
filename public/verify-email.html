@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Email – DevConnect</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+    </div>
+  </nav>
+
+  <div class="auth-shell">
+    <div class="auth-panel" style="text-align:center;">
+      <a href="/" class="auth-logo" style="justify-content:center;">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="auth-logo-img" />
+        <span class="auth-brand-text">DevConnect</span>
+      </a>
+
+      <!-- Verifying state -->
+      <div id="verifying">
+        <div class="spinner"></div>
+        <p class="t-sm t-muted">Verifying your email…</p>
+      </div>
+
+      <!-- Result state -->
+      <div id="result" class="hidden">
+        <div id="result-icon" style="font-size:40px;margin-bottom:16px;">✓</div>
+        <h1 class="auth-title" id="result-title">Email verified</h1>
+        <p class="auth-sub" id="result-msg">You can now log in to your account.</p>
+        <a href="/login.html" class="btn btn-primary btn-block" id="result-action" style="margin-top:8px;">Log in</a>
+      </div>
+
+      <!-- Resend form (no token in URL) -->
+      <div id="resend-section" class="hidden">
+        <h1 class="auth-title">Check your inbox</h1>
+        <p class="auth-sub">Enter your email to resend the verification link.</p>
+
+        <div class="alert" id="resend-msg"></div>
+
+        <form id="resend-form" style="text-align:left;">
+          <div class="field">
+            <label for="resend-email">Email address</label>
+            <input type="email" id="resend-email" placeholder="alice@college.edu" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="resend-btn">Resend verification email</button>
+        </form>
+
+        <div class="divider-label" style="margin-top:16px;">already verified?</div>
+        <a href="/login.html" class="btn btn-secondary btn-block">Log in</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    renderNavbar();
+
+    async function verifyToken() {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      const verifyingEl = document.getElementById('verifying');
+      const resultEl = document.getElementById('result');
+      const resendEl = document.getElementById('resend-section');
+
+      if (!token) {
+        verifyingEl.classList.add('hidden');
+        resendEl.classList.remove('hidden');
+        return;
+      }
+
+      const { data, error } = await api.post('/api/auth/verify-email', { token });
+
+      verifyingEl.classList.add('hidden');
+      resultEl.classList.remove('hidden');
+
+      if (error) {
+        document.getElementById('result-icon').textContent = '✗';
+        document.getElementById('result-icon').style.color = 'var(--red)';
+        document.getElementById('result-title').textContent = 'Verification failed';
+        document.getElementById('result-msg').textContent = error;
+        document.getElementById('result-action').textContent = 'Resend verification';
+        document.getElementById('result-action').href = '/verify-email.html';
+      }
+    }
+
+    document.getElementById('resend-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('resend-btn');
+      const email = document.getElementById('resend-email').value.trim();
+
+      setLoading(btn, true, 'Resend verification email');
+      hideAlert('resend-msg');
+
+      const { data, error } = await api.post('/api/auth/resend-verification', { email });
+
+      setLoading(btn, false, 'Resend verification email');
+
+      if (error) { showAlert('resend-msg', error, 'error'); }
+      else { showAlert('resend-msg', data.message, 'success'); }
+    });
+
+    verifyToken();
+  </script>
+</body>
+
+</html>

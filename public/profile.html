@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Builder Profile – DevConnect</title>
+  <meta name="description" content="View and manage student builder profiles, hackathon squads, and collaborative projects on DevConnect." />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <img src="/assets/logo-icon.png" alt="DevConnect Logo" class="navbar-logo" />
+        <span class="navbar-brand-text">DevConnect</span>
+      </a>
+      <div class="navbar-nav" id="nav-links"></div>
+      <button class="nav-toggle" id="mobile-menu-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-close">
+        <span class="navbar-brand">DevConnect</span>
+        <button id="mobile-close" class="btn-ghost">✕</button>
+      </div>
+      <div id="mobile-nav-links"></div>
+    </div>
+  </div>
+
+  <div class="wrap page-body">
+
+    <!-- Top Navigation / Breadcrumb -->
+    <div class="flex items-center justify-between" style="margin-bottom:16px;">
+      <a href="/dashboard.html" class="back-link" id="profile-back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        <span id="back-link-text">Dashboard</span>
+      </a>
+      <div id="profile-toast" class="alert alert-success" style="display:none;margin:0;padding:6px 14px;font-size:13px;"></div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Main Profile Content -->
+    <div id="content" class="hidden">
+
+      <!-- ================= VIEW MODE ================= -->
+      <div id="view-mode">
+
+        <!-- Hero Card -->
+        <div class="profile-hero">
+          <div class="profile-cover">
+            <div class="profile-cover-badge" id="student-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              Student Builder
+            </div>
+          </div>
+
+          <div class="profile-hero-body">
+            <div class="profile-header-main">
+              <div class="profile-identity-group">
+                <div class="profile-avatar-large" id="avatar-initials">?</div>
+                <div class="profile-meta-block">
+                  <div class="profile-fullname">
+                    <span id="profile-name">–</span>
+                    <span id="verified-tick" title="Verified Campus Builder" style="color:var(--accent);display:inline-flex;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="profile-academic-sub">
+                    <span id="profile-college-campus">Campus</span>
+                    <span class="dot-sep">·</span>
+                    <span id="profile-branch-text">Department</span>
+                    <span class="dot-sep">·</span>
+                    <span class="pill pill-default" id="profile-grad-badge">Class of 2026</span>
+                    <span id="profile-avail-pill"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Header Action Buttons -->
+              <div class="profile-hero-actions">
+                <button class="btn btn-secondary btn-sm" id="share-profile-btn" onclick="copyProfileLink()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Share Profile
+                </button>
+                <button class="btn btn-primary btn-sm hidden" id="edit-toggle-btn" onclick="toggleEdit()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  Edit Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- Builder Roles Strip -->
+            <div id="profile-roles-container" style="display:none;margin-bottom:14px;">
+              <div style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">
+                Builder Roles &amp; Focus
+              </div>
+              <div class="profile-roles-strip" id="profile-roles-list"></div>
+            </div>
+
+            <!-- Social Links Strip -->
+            <div class="profile-social-strip" id="profile-links"></div>
+          </div>
+        </div>
+
+        <!-- Stats Counter Strip -->
+        <div class="profile-stats-strip">
+          <div class="profile-stat-box">
+            <div class="profile-stat-val" id="stat-hackathons">0</div>
+            <div class="profile-stat-lbl">🏆 Hackathon Squads</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="profile-stat-val" id="stat-projects">0</div>
+            <div class="profile-stat-lbl">💻 Collaborative Projects</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="profile-stat-val" id="stat-skills">0</div>
+            <div class="profile-stat-lbl">⚡ Skills &amp; Tech</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="profile-stat-val" id="stat-campus">–</div>
+            <div class="profile-stat-lbl">🎓 Campus Community</div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs for Separated Sections -->
+        <div class="profile-tabs-bar" role="tablist">
+          <button class="profile-tab-btn active" id="tab-btn-hackathons" onclick="switchProfileTab('hackathons')">
+            🏆 Hackathon Squads
+            <span class="profile-tab-badge" id="badge-hackathons-count">0</span>
+          </button>
+          <button class="profile-tab-btn" id="tab-btn-projects" onclick="switchProfileTab('projects')">
+            💻 Collaborative Projects
+            <span class="profile-tab-badge" id="badge-projects-count">0</span>
+          </button>
+          <button class="profile-tab-btn" id="tab-btn-about" onclick="switchProfileTab('about')">
+            👤 About &amp; Expertise
+          </button>
+        </div>
+
+        <!-- TAB 1: 🏆 Hackathon Squads & Postings -->
+        <div id="tab-content-hackathons">
+          <div class="flex items-center justify-between" style="margin-bottom:16px;">
+            <div>
+              <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.02em;margin-bottom:2px;">
+                🏆 Hackathon Squads
+              </h2>
+              <p class="t-sm t-muted">Competitions, hackathon teams, and squads formed or joined by this builder.</p>
+            </div>
+            <a href="/edit-project.html?type=hackathon" class="btn btn-primary btn-sm hidden" id="add-hackathon-btn">
+              + Form Hackathon Squad
+            </a>
+          </div>
+
+          <div id="hackathons-container" class="profile-postings-grid"></div>
+        </div>
+
+        <!-- TAB 2: 💻 Collaborative Projects & Postings -->
+        <div id="tab-content-projects" class="hidden">
+          <div class="flex items-center justify-between" style="margin-bottom:16px;">
+            <div>
+              <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.02em;margin-bottom:2px;">
+                💻 Collaborative Projects
+              </h2>
+              <p class="t-sm t-muted">Semester capstones, open source tools, and startup MVPs.</p>
+            </div>
+            <a href="/edit-project.html" class="btn btn-primary btn-sm hidden" id="add-project-btn">
+              + Post a Project
+            </a>
+          </div>
+
+          <div id="projects-container" class="profile-postings-grid"></div>
+        </div>
+
+        <!-- TAB 3: 👤 About & Expertise -->
+        <div id="tab-content-about" class="hidden">
+          <div class="grid-2" style="align-items:start;gap:var(--sp-4);">
+            
+            <div class="card" style="padding:var(--sp-4);">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                About the Builder
+              </h3>
+              <p id="profile-bio-full" class="t-sm" style="line-height:1.75;color:var(--text-2);"></p>
+            </div>
+
+            <div class="card" style="padding:var(--sp-4);">
+              <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Tech Stack &amp; Skills
+              </h3>
+              <div class="tags" id="profile-skills-full" style="margin-bottom:16px;"></div>
+
+              <h4 style="font-size:13px;font-weight:700;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;letter-spacing:0.04em;">
+                Academic Details
+              </h4>
+              <div class="profile-detail-grid" style="grid-template-columns:1fr;gap:10px;">
+                <div class="detail-item">
+                  <label>Institution</label>
+                  <span id="detail-college">–</span>
+                </div>
+                <div class="detail-item">
+                  <label>Department / Branch</label>
+                  <span id="detail-branch">–</span>
+                </div>
+                <div class="detail-item">
+                  <label>Expected Graduation</label>
+                  <span id="detail-grad">–</span>
+                </div>
+                <div class="detail-item">
+                  <label>Member Since</label>
+                  <span id="detail-since">–</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= EDIT MODE (Own profile) ================= -->
+      <div id="edit-mode" class="hidden">
+        <div class="form-section">
+          <div class="flex items-center justify-between" style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+            <div>
+              <h2 style="font-size:20px;font-weight:800;margin:0;">Edit Your Builder Profile</h2>
+              <p class="t-sm t-muted" style="margin:4px 0 0;">Update your skills, builder roles, and contact links to stand out to hackathon teams.</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="toggleEdit()">✕ Cancel</button>
+          </div>
+
+          <div class="alert" id="edit-msg"></div>
+
+          <form id="edit-form" novalidate>
+
+            <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:0.05em;margin-bottom:12px;">
+              1. Basic Information
+            </h3>
+            <div class="grid-2">
+              <div class="field">
+                <label for="e-name">Full Name *</label>
+                <input type="text" id="e-name" placeholder="Alice Bose" required />
+              </div>
+              <div class="field">
+                <label for="e-college">College / University *</label>
+                <input type="text" id="e-college" placeholder="IIT Bombay" required />
+              </div>
+              <div class="field">
+                <label for="e-branch">Branch / Major</label>
+                <input type="text" id="e-branch" placeholder="Computer Science & Engineering" />
+              </div>
+              <div class="field">
+                <label for="e-grad">Graduation Year</label>
+                <input type="number" id="e-grad" min="2000" max="2100" placeholder="2026" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="e-bio">About / Bio</label>
+              <textarea id="e-bio" rows="3" placeholder="Tell other builders what you love building, past hackathon wins, or favorite frameworks…"></textarea>
+            </div>
+
+            <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:0.05em;margin:24px 0 12px;">
+              2. Builder Roles &amp; Specialization
+            </h3>
+            <div class="field">
+              <label>Select Your Roles <span class="hint">(click to toggle or add custom)</span></label>
+              <div class="suggestion-chips" id="role-suggestions">
+                <span class="suggestion-chip" onclick="toggleRoleChip('Frontend Dev')">Frontend Dev</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('Backend Dev')">Backend Dev</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('Full-Stack Dev')">Full-Stack Dev</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('UI/UX Designer')">UI/UX Designer</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('AI/ML Engineer')">AI/ML Engineer</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('Mobile Dev (React Native/Flutter)')">Mobile Dev</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('Cloud / DevOps')">Cloud / DevOps</span>
+                <span class="suggestion-chip" onclick="toggleRoleChip('Pitch / Product Manager')">Pitch / Product Lead</span>
+              </div>
+              <div class="tags mt-2" id="e-roles-display"></div>
+              <input type="hidden" id="e-roles-data" value="[]" />
+            </div>
+
+            <div class="field">
+              <label for="e-skills-input">Skills &amp; Technologies <span class="hint">(type and press Enter)</span></label>
+              <input type="text" id="e-skills-input" placeholder="e.g. React, Python, Figma, PyTorch, Docker" />
+              <div class="tags mt-1" id="e-skills-display"></div>
+              <input type="hidden" id="e-skills-data" value="[]" />
+            </div>
+
+            <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:0.05em;margin:24px 0 12px;">
+              3. Online Presence &amp; Links
+            </h3>
+            <div class="grid-3" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:var(--sp-2);">
+              <div class="field">
+                <label for="e-github">GitHub URL</label>
+                <input type="url" id="e-github" placeholder="https://github.com/username" />
+              </div>
+              <div class="field">
+                <label for="e-linkedin">LinkedIn URL</label>
+                <input type="url" id="e-linkedin" placeholder="https://linkedin.com/in/username" />
+              </div>
+              <div class="field">
+                <label for="e-portfolio">Personal Portfolio / Website</label>
+                <input type="url" id="e-portfolio" placeholder="https://yourname.dev" />
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:14px;">
+              <label for="e-avail">Squad &amp; Project Availability</label>
+              <select id="e-avail">
+                <option value="open">🟢 Open to hackathon squads &amp; team projects</option>
+                <option value="busy">⚪ Focused on current projects (Not looking right now)</option>
+              </select>
+            </div>
+
+            <div class="flex gap-2" style="margin-top:24px;">
+              <button type="submit" class="btn btn-primary" id="save-btn">Save Builder Profile</button>
+              <button type="button" class="btn btn-ghost" onclick="toggleEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    let editSkills = [];
+    let editRoles = [];
+    let currentProfileUser = null;
+    let isOwner = false;
+    let activeProfileUserId = null;
+
+    // ── Helper: Copy profile link ──────────────────────────────────────────
+    function copyProfileLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Profile link copied to clipboard!');
+      }).catch(() => {
+        prompt('Copy your profile link:', url);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('profile-toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+
+    // ── Helper: Delete Hackathon or Project posting ────────────────────────
+    async function deletePosting(id, title, typeLabel) {
+      const confirmed = confirm(`Are you sure you want to delete "${title}"?\n\nThis will permanently delete this ${typeLabel} and all associated team applications. This action cannot be undone.`);
+      if (!confirmed) return;
+
+      const { error } = await api.delete(`/api/projects/${id}`);
+      if (error) {
+        alert('Could not delete: ' + error);
+      } else {
+        showToast(`The ${typeLabel} was successfully deleted.`);
+        // Reload postings to update cards and counts
+        if (activeProfileUserId) {
+          const { data: projData } = await api.get(`/api/projects/user/${activeProfileUserId}`);
+          if (projData) {
+            renderUserPostings(projData.ownedProjects || [], projData.memberProjects || []);
+          }
+        }
+      }
+    }
+
+    // ── Helper: Tabs switcher ──────────────────────────────────────────────
+    function switchProfileTab(tabName) {
+      ['hackathons', 'projects', 'about'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const panel = document.getElementById(`tab-content-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabName);
+        if (panel) panel.classList.toggle('hidden', t !== tabName);
+      });
+    }
+
+    // ── Tag inputs for roles & skills ──────────────────────────────────────
+    function renderEditSkills() {
+      const display = document.getElementById('e-skills-display');
+      display.innerHTML = '';
+      editSkills.forEach((skill, i) => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.style.cursor = 'pointer';
+        tag.innerHTML = `${escapeHtml(skill)} <span class="tag-remove" title="Remove">✕</span>`;
+        tag.querySelector('.tag-remove').onclick = () => { editSkills.splice(i, 1); renderEditSkills(); };
+        display.appendChild(tag);
+      });
+      document.getElementById('e-skills-data').value = JSON.stringify(editSkills);
+    }
+
+    function renderEditRoles() {
+      const display = document.getElementById('e-roles-display');
+      display.innerHTML = '';
+      editRoles.forEach((role, i) => {
+        const tag = document.createElement('span');
+        tag.className = 'profile-role-pill';
+        tag.style.cursor = 'pointer';
+        tag.innerHTML = `⚡ ${escapeHtml(role)} <span style="margin-left:6px;cursor:pointer;" title="Remove">✕</span>`;
+        tag.onclick = () => { editRoles.splice(i, 1); renderEditRoles(); syncRoleSuggestionChips(); };
+        display.appendChild(tag);
+      });
+      document.getElementById('e-roles-data').value = JSON.stringify(editRoles);
+      syncRoleSuggestionChips();
+    }
+
+    function toggleRoleChip(roleName) {
+      const idx = editRoles.indexOf(roleName);
+      if (idx >= 0) {
+        editRoles.splice(idx, 1);
+      } else {
+        editRoles.push(roleName);
+      }
+      renderEditRoles();
+    }
+
+    function syncRoleSuggestionChips() {
+      document.querySelectorAll('#role-suggestions .suggestion-chip').forEach(chip => {
+        const text = chip.textContent.trim();
+        const matches = editRoles.some(r => r.toLowerCase().includes(text.toLowerCase()) || text.toLowerCase().includes(r.toLowerCase()));
+        chip.classList.toggle('selected', matches);
+      });
+    }
+
+    document.getElementById('e-skills-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val && !editSkills.includes(val)) {
+          editSkills.push(val);
+          renderEditSkills();
+        }
+        e.target.value = '';
+      }
+    });
+
+    function toggleEdit() {
+      document.getElementById('view-mode').classList.toggle('hidden');
+      document.getElementById('edit-mode').classList.toggle('hidden');
+      const isEditing = !document.getElementById('edit-mode').classList.contains('hidden');
+      const toggleBtn = document.getElementById('edit-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.textContent = isEditing ? 'Cancel Edit' : 'Edit Profile';
+      }
+      if (isEditing) {
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      }
+    }
+
+    // ── Fill View Mode ─────────────────────────────────────────────────────
+    function fillViewMode(user) {
+      currentProfileUser = user;
+      document.getElementById('avatar-initials').textContent = getInitials(user.name);
+      document.getElementById('profile-name').textContent = user.name || 'Anonymous Builder';
+      
+      const college = user.college || 'Campus Unspecified';
+      const branch = user.branch || 'Student Builder';
+      document.getElementById('profile-college-campus').textContent = college;
+      document.getElementById('profile-branch-text').textContent = branch;
+      document.getElementById('detail-college').textContent = college;
+      document.getElementById('detail-branch').textContent = branch;
+      
+      const gradYear = user.gradYear ? `Class of ${user.gradYear}` : 'Class of 2026';
+      document.getElementById('profile-grad-badge').textContent = gradYear;
+      document.getElementById('detail-grad').textContent = user.gradYear || 'Not specified';
+      
+      document.getElementById('stat-campus').textContent = user.college ? user.college.split(' ')[0] : 'Campus';
+
+      if (user.createdAt) {
+        document.getElementById('detail-since').textContent = formatDate(user.createdAt);
+      } else {
+        document.getElementById('detail-since').textContent = 'Active Member';
+      }
+
+      // Availability
+      const availEl = document.getElementById('profile-avail-pill');
+      if (user.availability === 'open') {
+        availEl.innerHTML = '<span class="pill pill-green" style="display:inline-flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#059669;display:inline-block;"></span> Open to teams</span>';
+      } else {
+        availEl.innerHTML = '<span class="pill pill-default">⚪ Focused</span>';
+      }
+
+      // Roles
+      const rolesContainer = document.getElementById('profile-roles-container');
+      const rolesList = document.getElementById('profile-roles-list');
+      rolesList.innerHTML = '';
+      if (user.roles && user.roles.length > 0) {
+        user.roles.forEach(role => {
+          const pill = document.createElement('span');
+          pill.className = 'profile-role-pill';
+          pill.textContent = `⚡ ${role}`;
+          rolesList.appendChild(pill);
+        });
+        rolesContainer.style.display = 'block';
+      } else {
+        rolesContainer.style.display = 'none';
+      }
+
+      // Bio
+      const bioText = user.bio || 'This builder has not added a detailed bio yet.';
+      document.getElementById('profile-bio-full').textContent = bioText;
+
+      // Skills
+      const skillsContainer = document.getElementById('profile-skills-full');
+      skillsContainer.innerHTML = '';
+      const skillsList = user.skills || [];
+      document.getElementById('stat-skills').textContent = skillsList.length;
+
+      if (skillsList.length > 0) {
+        skillsList.forEach(s => {
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.textContent = s;
+          skillsContainer.appendChild(tag);
+        });
+      } else {
+        skillsContainer.innerHTML = '<span class="t-sm t-muted">No skills added yet.</span>';
+      }
+
+      // Social / Portfolio Links
+      const linksEl = document.getElementById('profile-links');
+      linksEl.innerHTML = '';
+      if (user.githubUrl) {
+        linksEl.innerHTML += `<a href="${escapeHtml(user.githubUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>`;
+      }
+      if (user.linkedinUrl) {
+        linksEl.innerHTML += `<a href="${escapeHtml(user.linkedinUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>`;
+      }
+      if (user.portfolioUrl) {
+        linksEl.innerHTML += `<a href="${escapeHtml(user.portfolioUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          Portfolio Website
+        </a>`;
+      }
+    }
+
+    // ── Render Postings into Separated Sections ────────────────────────────
+    function renderUserPostings(ownedProjects = [], memberProjects = []) {
+      const allProjects = [
+        ...ownedProjects.map(p => ({ ...p, _roleType: 'owner' })),
+        ...memberProjects.map(p => ({ ...p, _roleType: 'member' })),
+      ];
+
+      // Separate Hackathons and Collaborative Projects
+      const hackathons = allProjects.filter(p => p.isHackathon);
+      const regularProjects = allProjects.filter(p => !p.isHackathon);
+
+      // Update counters in stats ribbon and tabs
+      document.getElementById('stat-hackathons').textContent = hackathons.length;
+      document.getElementById('badge-hackathons-count').textContent = hackathons.length;
+
+      document.getElementById('stat-projects').textContent = regularProjects.length;
+      document.getElementById('badge-projects-count').textContent = regularProjects.length;
+
+      // ── Render Hackathons ──
+      const hackathonsContainer = document.getElementById('hackathons-container');
+      hackathonsContainer.innerHTML = '';
+      if (hackathons.length === 0) {
+        hackathonsContainer.innerHTML = `
+          <div class="profile-empty-card" style="grid-column:1/-1;">
+            <div class="profile-empty-icon">🏆</div>
+            <div class="profile-empty-title">No Hackathon Squads Yet</div>
+            <div class="profile-empty-desc">
+              ${isOwner 
+                ? 'Get ready for upcoming campus & global hackathons! Form your dream squad or recruit UI/UX designers and ML hackers.' 
+                : 'This builder hasn’t posted or joined any hackathon squads yet.'}
+            </div>
+            ${isOwner ? '<a href="/edit-project.html?type=hackathon" class="btn btn-primary btn-sm">+ Form Hackathon Squad</a>' : ''}
+          </div>
+        `;
+      } else {
+        hackathons.forEach(p => {
+          const isItemOwner = p._roleType === 'owner';
+          const card = document.createElement('div');
+          card.className = 'profile-post-card hackathon-card';
+
+          const filledSpots = (p.acceptedMembers || []).length;
+          const totalSpots = p.totalPositions || 4;
+          const isOpen = p.status === 'open';
+
+          // Roles needed chips
+          const rolesHtml = (p.rolesNeeded && p.rolesNeeded.length > 0)
+            ? p.rolesNeeded.slice(0, 3).map(r => `<span class="tag" style="background:var(--amber-bg);color:#92400E;border-color:var(--amber-border);">🎯 ${escapeHtml(r)}</span>`).join(' ')
+            : (p.requiredSkills || []).slice(0, 3).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(' ');
+
+          const collegeBadge = p.college 
+            ? `<span class="pill pill-default" style="font-size:11px;">🏫 ${escapeHtml(p.college)}</span>` 
+            : `<span class="pill pill-default" style="font-size:11px;">🌐 Inter-College</span>`;
+
+          const deadlineStr = p.deadline ? formatDate(p.deadline) : 'Rolling';
+
+          card.innerHTML = `
+            <div>
+              <div class="profile-post-header">
+                <span class="pill pill-amber" style="font-weight:700;">
+                  🏆 ${escapeHtml(p.hackathonName || 'Hackathon Squad')}
+                </span>
+                <span class="pill ${isItemOwner ? 'pill-blue' : 'pill-green'}">
+                  ${isItemOwner ? '👑 Squad Lead' : '🤝 Squad Member'}
+                </span>
+              </div>
+              <h3 class="profile-post-title">
+                <a href="/project.html?id=${p._id}">${escapeHtml(p.title)}</a>
+              </h3>
+              <p class="profile-post-desc">${escapeHtml(p.description)}</p>
+              <div class="tags mt-2">${rolesHtml}</div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                ${collegeBadge}
+                <span class="pill pill-default" style="font-size:11px;">📅 Deadline: ${deadlineStr}</span>
+              </div>
+              <div class="profile-post-meta">
+                <span>👥 <strong>${filledSpots}/${totalSpots}</strong> members</span>
+                <span class="pill ${isOpen ? 'pill-green' : 'pill-default'}">${isOpen ? 'Open for Teams' : 'Squad Full'}</span>
+              </div>
+              <div class="profile-post-actions" style="flex-wrap:wrap;">
+                <a href="/project.html?id=${p._id}" class="btn btn-secondary btn-sm" style="flex:1;min-width:100px;">View Squad</a>
+                ${(isOwner && isItemOwner) ? `
+                  <a href="/applicants.html?projectId=${p._id}" class="btn btn-secondary btn-sm" title="Review Applications">
+                    Applicants
+                  </a>
+                  <a href="/edit-project.html?id=${p._id}" class="btn btn-ghost btn-sm" title="Edit Squad">
+                    Edit
+                  </a>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="deletePosting('${p._id}', '${escapeHtml(p.title)}', 'hackathon squad')" title="Delete Hackathon Squad">
+                    Delete
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+          hackathonsContainer.appendChild(card);
+        });
+      }
+
+      // ── Render Collaborative Projects ──
+      const projectsContainer = document.getElementById('projects-container');
+      projectsContainer.innerHTML = '';
+      if (regularProjects.length === 0) {
+        projectsContainer.innerHTML = `
+          <div class="profile-empty-card" style="grid-column:1/-1;">
+            <div class="profile-empty-icon">💻</div>
+            <div class="profile-empty-title">No Collaborative Projects Yet</div>
+            <div class="profile-empty-desc">
+              ${isOwner 
+                ? 'Looking to build capstones, startups, or open source tools? Post a collaborative project to recruit skilled peers.' 
+                : 'This builder hasn’t posted or joined any collaborative projects yet.'}
+            </div>
+            ${isOwner ? '<a href="/edit-project.html" class="btn btn-primary btn-sm">+ Post a Project</a>' : ''}
+          </div>
+        `;
+      } else {
+        regularProjects.forEach(p => {
+          const isItemOwner = p._roleType === 'owner';
+          const card = document.createElement('div');
+          card.className = 'profile-post-card project-card';
+
+          const filledSpots = (p.acceptedMembers || []).length;
+          const totalSpots = p.totalPositions || 3;
+          const isOpen = p.status === 'open';
+
+          const skillsHtml = (p.requiredSkills || []).slice(0, 3).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(' ');
+          const collegeBadge = p.college 
+            ? `<span class="pill pill-default" style="font-size:11px;">🏫 ${escapeHtml(p.college)}</span>` 
+            : `<span class="pill pill-default" style="font-size:11px;">🌐 Open Campus</span>`;
+          const deadlineStr = p.deadline ? formatDate(p.deadline) : 'Rolling';
+
+          card.innerHTML = `
+            <div>
+              <div class="profile-post-header">
+                <span class="pill pill-default">
+                  💻 ${escapeHtml(p.category || 'General')}
+                </span>
+                <span class="pill ${isItemOwner ? 'pill-blue' : 'pill-green'}">
+                  ${isItemOwner ? '👑 Project Lead' : '🤝 Collaborator'}
+                </span>
+              </div>
+              <h3 class="profile-post-title">
+                <a href="/project.html?id=${p._id}">${escapeHtml(p.title)}</a>
+              </h3>
+              <p class="profile-post-desc">${escapeHtml(p.description)}</p>
+              <div class="tags mt-2">${skillsHtml}</div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                ${collegeBadge}
+                <span class="pill pill-default" style="font-size:11px;">📅 Deadline: ${deadlineStr}</span>
+              </div>
+              <div class="profile-post-meta">
+                <span>👥 <strong>${filledSpots}/${totalSpots}</strong> spots</span>
+                <span class="pill ${isOpen ? 'pill-green' : 'pill-default'}">${isOpen ? 'Recruiting' : 'Closed'}</span>
+              </div>
+              <div class="profile-post-actions" style="flex-wrap:wrap;">
+                <a href="/project.html?id=${p._id}" class="btn btn-secondary btn-sm" style="flex:1;min-width:100px;">View Project</a>
+                ${(isOwner && isItemOwner) ? `
+                  <a href="/applicants.html?projectId=${p._id}" class="btn btn-secondary btn-sm" title="Review Applications">
+                    Applicants
+                  </a>
+                  <a href="/edit-project.html?id=${p._id}" class="btn btn-ghost btn-sm" title="Edit Project">
+                    Edit
+                  </a>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="deletePosting('${p._id}', '${escapeHtml(p.title)}', 'project')" title="Delete Project">
+                    Delete
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+          projectsContainer.appendChild(card);
+        });
+      }
+    }
+
+    // ── Fill Edit Form ─────────────────────────────────────────────────────
+    function fillEditForm(user) {
+      document.getElementById('e-name').value = user.name || '';
+      document.getElementById('e-college').value = user.college || '';
+      document.getElementById('e-branch').value = user.branch || '';
+      document.getElementById('e-grad').value = user.gradYear || '';
+      document.getElementById('e-bio').value = user.bio || '';
+      document.getElementById('e-github').value = user.githubUrl || '';
+      document.getElementById('e-linkedin').value = user.linkedinUrl || '';
+      document.getElementById('e-portfolio').value = user.portfolioUrl || '';
+      document.getElementById('e-avail').value = user.availability || 'open';
+
+      editSkills = [...(user.skills || [])];
+      editRoles = [...(user.roles || [])];
+      renderEditSkills();
+      renderEditRoles();
+    }
+
+    // ── Helper: Escape HTML ────────────────────────────────────────────────
+    function escapeHtml(str = '') {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ── Initialize Page ────────────────────────────────────────────────────
+    async function init() {
+      const currentUser = await renderNavbar();
+
+      const params = new URLSearchParams(window.location.search);
+      const profileId = params.get('id');
+      isOwner = !profileId || (currentUser && currentUser._id === profileId);
+
+      let targetUserId = profileId;
+      let profileData = null;
+
+      if (isOwner) {
+        if (!currentUser) {
+          window.location.href = '/login.html';
+          return;
+        }
+        const { data, error } = await api.get('/api/users/me/profile');
+        if (error) { alert(error); return; }
+        profileData = data?.user;
+        targetUserId = profileData?._id;
+      } else {
+        const { data, error } = await api.get(`/api/users/${profileId}`);
+        if (error) {
+          alert('Could not load user profile: ' + error);
+          window.location.href = '/discover.html';
+          return;
+        }
+        profileData = data?.user;
+      }
+      activeProfileUserId = targetUserId;
+
+      // Update UI mode controls
+      if (isOwner) {
+        document.getElementById('edit-toggle-btn').classList.remove('hidden');
+        document.getElementById('add-hackathon-btn').classList.remove('hidden');
+        document.getElementById('add-project-btn').classList.remove('hidden');
+        fillEditForm(profileData);
+      } else {
+        document.getElementById('back-link-text').textContent = 'Explore Builders';
+        document.getElementById('profile-back-link').href = '/discover.html';
+      }
+
+      fillViewMode(profileData);
+
+      // Fetch user's projects and hackathons
+      if (targetUserId) {
+        const { data: projData } = await api.get(`/api/projects/user/${targetUserId}`);
+        if (projData) {
+          renderUserPostings(projData.ownedProjects || [], projData.memberProjects || []);
+        }
+      }
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').classList.remove('hidden');
+    }
+
+    // ── Save Profile Submission ────────────────────────────────────────────
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('save-btn');
+      setLoading(btn, true, 'Save Builder Profile');
+      hideAlert('edit-msg');
+
+      const payload = {
+        name: document.getElementById('e-name').value.trim(),
+        college: document.getElementById('e-college').value.trim(),
+        branch: document.getElementById('e-branch').value.trim(),
+        gradYear: Number(document.getElementById('e-grad').value) || undefined,
+        bio: document.getElementById('e-bio').value.trim(),
+        skills: JSON.parse(document.getElementById('e-skills-data').value || '[]'),
+        roles: JSON.parse(document.getElementById('e-roles-data').value || '[]'),
+        githubUrl: document.getElementById('e-github').value.trim(),
+        linkedinUrl: document.getElementById('e-linkedin').value.trim(),
+        portfolioUrl: document.getElementById('e-portfolio').value.trim(),
+        availability: document.getElementById('e-avail').value,
+      };
+
+      const { data, error } = await api.put('/api/users/me', payload);
+      setLoading(btn, false, 'Save Builder Profile');
+
+      if (error) {
+        showAlert('edit-msg', error, 'error');
+      } else {
+        showAlert('edit-msg', 'Profile updated successfully!', 'success');
+        fillViewMode(data.user);
+        showToast('Your profile was updated!');
+        setTimeout(toggleEdit, 1000);
+      }
+    });
+
+    init();
+  </script>
+</body>
+
+</html>

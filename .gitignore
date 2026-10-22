@@ -1,0 +1,18 @@
+# Dependencies and build output
+node_modules/
+dist/
+
+# Secrets – NEVER commit this file
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/

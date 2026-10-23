@@ -99,41 +99,71 @@
   </div>
 
   <script src="/js/api.js"></script>
-  <script>
-    renderNavbar();
-    initPasswordToggle('pw-toggle-reg');
+  
+<script>
+  renderNavbar();
+  initPasswordToggle('pw-toggle-reg');
 
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const college = document.getElementById('college').value.trim();
-      const password = document.getElementById('password').value;
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      setLoading(btn, true, 'Create account');
-      hideAlert('msg');
-      document.getElementById('verify-action-box').style.display = 'none';
+    const btn = document.getElementById('submit-btn');
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const college = document.getElementById('college').value.trim();
+    const password = document.getElementById('password').value;
 
-      const { data, error } = await api.post('/api/auth/register', { name, email, college, password });
+    setLoading(btn, true, 'Create account');
+    hideAlert('msg');
+    document.getElementById('verify-action-box').style.display = 'none';
 
-      setLoading(btn, false, 'Create account');
+    try {
+      const { data, error } = await api.post('/api/auth/register', {
+        name,
+        email,
+        college,
+        password
+      });
 
       if (error) {
         showAlert('msg', error, 'error');
-      } else {
-        showAlert('msg', data.message, 'success');
-
-        if (data.verifyUrl) {
-          const box = document.getElementById('verify-action-box');
-          const link = document.getElementById('direct-verify-link');
-          link.href = data.verifyUrl;
-          box.style.display = 'block';
-        }
-        document.getElementById('register-form').reset();
+        return;
       }
-    });
-  </script>
+
+      showAlert('msg', data.message || 'Registration request completed.', 'success');
+
+      if (data.verifyUrl) {
+        const box = document.getElementById('verify-action-box');
+        const link = document.getElementById('direct-verify-link');
+
+        // Prefer the deployed website instead of localhost.
+        const verifyUrl = new URL(data.verifyUrl, window.location.origin);
+
+        if (verifyUrl.hostname === 'localhost' ||
+            verifyUrl.hostname === '127.0.0.1') {
+          verifyUrl.protocol = window.location.protocol;
+          verifyUrl.host = window.location.host;
+        }
+
+        link.href = verifyUrl.href;
+        box.style.display = 'block';
+      }
+
+      document.getElementById('register-form').reset();
+
+    } catch (err) {
+      console.error('Registration request failed:', err);
+      showAlert(
+        'msg',
+        'Registration failed. Please check your connection and try again.',
+        'error'
+      );
+    } finally {
+      setLoading(btn, false, 'Create account');
+    }
+  });
+</script>
+
 </body>
 
 </html>

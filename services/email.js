@@ -24,6 +24,9 @@ function getTransporter() {
       user: process.env.GMAIL_USER,         // e.g. devconnect@gmail.com
       pass: process.env.GMAIL_APP_PASSWORD, // 16-char App Password (NOT your login password)
     },
+    connectionTimeout: 5000, // 5s connection timeout
+    greetingTimeout: 5000,
+    socketTimeout: 5000,
   });
 
   return _transporter;
@@ -80,6 +83,11 @@ function baseTemplate({ title, preheader, bodyHtml }) {
 
 // ── Low-level send ─────────────────────────────────────────────────────────────
 async function sendEmail({ to, subject, html }) {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn('[Email] Skipping email delivery: GMAIL_USER or GMAIL_APP_PASSWORD is not set.');
+    return;
+  }
+
   const transporter = getTransporter();
 
   try {
@@ -105,7 +113,8 @@ async function sendEmail({ to, subject, html }) {
 
 // ── Verification email ─────────────────────────────────────────────────────────
 async function sendVerificationEmail(userEmail, rawToken) {
-  const link = `${process.env.APP_URL}/verify-email.html?token=${rawToken}`;
+  const baseUrl = process.env.APP_URL || 'http://localhost:3000';
+  const link = `${baseUrl}/verify-email.html?token=${rawToken}`;
 
   await sendEmail({
     to:      userEmail,
@@ -132,7 +141,8 @@ async function sendVerificationEmail(userEmail, rawToken) {
 
 // ── Password reset email ───────────────────────────────────────────────────────
 async function sendPasswordResetEmail(userEmail, rawToken) {
-  const link = `${process.env.APP_URL}/reset-password.html?token=${rawToken}`;
+  const baseUrl = process.env.APP_URL || 'http://localhost:3000';
+  const link = `${baseUrl}/reset-password.html?token=${rawToken}`;
 
   await sendEmail({
     to:      userEmail,

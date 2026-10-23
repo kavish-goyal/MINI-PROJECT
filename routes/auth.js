@@ -59,11 +59,10 @@ router.post('/register', authLimiter, async (req, res) => {
         });
 
         const verifyUrl = `${process.env.APP_URL || 'http://localhost:3000'}/verify-email.html?token=${rawToken}`;
-        try {
-          await sendVerificationEmail(existing.email, rawToken);
-        } catch (emailErr) {
+        // Send email in background so SMTP timeouts/blocks don't freeze the response
+        sendVerificationEmail(existing.email, rawToken).catch((emailErr) => {
           console.error('[Email] Verification email failed:', emailErr.message);
-        }
+        });
 
         return res.status(200).json({
           unverifiedExisting: true,
@@ -98,12 +97,10 @@ router.post('/register', authLimiter, async (req, res) => {
 
     const verifyUrl = `${process.env.APP_URL || 'http://localhost:3000'}/verify-email.html?token=${rawToken}`;
 
-    // Send verification email
-    try {
-      await sendVerificationEmail(user.email, rawToken);
-    } catch (emailErr) {
+    // Send verification email in background so Render/SMTP latency or port blocks never hang registration
+    sendVerificationEmail(user.email, rawToken).catch((emailErr) => {
       console.error('[Email] Verification email failed:', emailErr.message);
-    }
+    });
 
     res.status(201).json({
       message: 'Account created! Please verify your email to get started.',
@@ -190,12 +187,10 @@ router.post('/resend-verification', authLimiter, async (req, res) => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
-    // Send the email — wrapped so a delivery failure still returns success
-    try {
-      await sendVerificationEmail(user.email, rawToken);
-    } catch (emailErr) {
+    // Send the email in background so delivery failure/timeout doesn't freeze response
+    sendVerificationEmail(user.email, rawToken).catch((emailErr) => {
       console.error('[Email] Resend verification failed:', emailErr.message);
-    }
+    });
 
     res.json({ message: 'If that account exists and is unverified, a new link has been sent.' });
   } catch (err) {
@@ -279,12 +274,10 @@ router.post('/forgot-password', authLimiter, async (req, res) => {
       expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
     });
 
-    // Send the reset email — wrapped so a delivery failure still returns success
-    try {
-      await sendPasswordResetEmail(user.email, rawToken);
-    } catch (emailErr) {
+    // Send the reset email in background so delivery failure/timeout doesn't freeze response
+    sendPasswordResetEmail(user.email, rawToken).catch((emailErr) => {
       console.error('[Email] Password reset email failed:', emailErr.message);
-    }
+    });
 
     res.json({ message: GENERIC_MSG });
   } catch (err) {

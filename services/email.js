@@ -89,12 +89,18 @@ async function sendEmail({ to, subject, html }) {
       subject,
       html,
     });
-  } catch (err) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('[Email] Send failed:', err.message);
-    }
-    throw new Error('Email delivery failed.');
-  }
+  
+} catch (err) {
+  console.error('[Email] Send failed:', {
+    code: err.code,
+    responseCode: err.responseCode,
+    command: err.command,
+    message: err.message
+  });
+
+  throw new Error('Email delivery failed.');
+}
+
 }
 
 // ── Verification email ─────────────────────────────────────────────────────────
